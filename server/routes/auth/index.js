@@ -1,6 +1,8 @@
 const router = require("express").Router();
-const { User } = require("../../db/models");
 const jwt = require("jsonwebtoken");
+const { User } = require("../../db/models");
+const { generateToken } = require("../../utils/token");
+const { getCookieSettings } = require("../../utils/cookies");
 
 router.post("/register", async (req, res, next) => {
   try {
@@ -54,21 +56,24 @@ router.post("/login", async (req, res, next) => {
 
     if (!user) {
       console.log({ error: `No user found for username: ${username}` });
-      res.status(401).json({ error: "Wrong username and/or password" });
-    } else if (!user.correctPassword(password)) {
-      console.log({ error: "Wrong username and/or password" });
-      res.status(401).json({ error: "Wrong username and/or password" });
-    } else {
-      const token = jwt.sign(
-        { id: user.dataValues.id },
-        process.env.SESSION_SECRET,
-        { expiresIn: 86400 }
-      );
-      res.json({
-        ...user.dataValues,
-        token,
-      });
+      return res.status(401).json({ error: "Wrong username and/or password" });
     }
+    if (!user.correctPassword(password)) {
+      console.log({ error: "Wrong username and/or password" });
+      return res.status(401).json({ error: "Wrong username and/or password" });
+    }
+
+    const payload = { id: user.dataValues.id };
+    const { token, csrfToken } = generateToken(payload);
+    const { cookieName, settings } = getCookieSettings();
+
+    res.cookie(cookieName, token, settings);
+
+    res.json({
+      success: true,
+      csrfToken
+    });
+
   } catch (error) {
     next(error);
   }
