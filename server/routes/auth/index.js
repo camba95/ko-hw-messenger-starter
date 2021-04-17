@@ -2,7 +2,7 @@ const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const { User } = require("../../db/models");
 const { generateToken } = require("../../utils/token");
-const { getCookieSettings } = require("../../utils/cookies");
+const { getCookieSettings, getCookieName } = require("../../utils/cookies");
 
 router.post("/register", async (req, res, next) => {
   try {
@@ -80,11 +80,12 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-router.delete("/logout", (req, res, next) => {
+router.delete("/logout", (req, res) => {
+  req.res.clearCookie(COOKIE_NAME);
   res.sendStatus(204);
 });
 
-router.get("/user", (req, res, next) => {
+router.get("/user", (req, res) => {
   if (req.user) {
     return res.json(req.user);
   } else {

@@ -7,7 +7,7 @@ import {
   setSearchedUsers,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
-import { setHeader } from "../../utils/token";
+import { setHeader, clearHeader } from "../../utils/token";
 import { CSRF_HEADER } from "../../constants";
 
 axios.interceptors.request.use(async function(config) {
@@ -64,11 +64,12 @@ export const login = (credentials) => async (dispatch) => {
 export const logout = (id) => async (dispatch) => {
   try {
     await axios.delete("/auth/logout");
-    await localStorage.removeItem("messenger-token");
-    dispatch(gotUser({}));
-    socket.emit("logout", id);
   } catch (error) {
     console.error(error);
+  } finally {
+    clearHeader(CSRF_HEADER);
+    dispatch(gotUser({}));
+    socket.emit("logout", id);
   }
 };
 

@@ -4,6 +4,6 @@ export const setHeader = (key, value) => {
   axios.defaults.headers.common[key] = value;
 };
 
-export const removeHeader = (key) => {
+export const clearHeader = (key) => {
   delete axios.defaults.headers.common[key]
 };

@@ -14,6 +14,9 @@ const getCookieSettings = () => {
   return { cookieName: COOKIE_NAME, settings };
 };
 
+const getCookieName = () => COOKIE_NAME;
+
 module.exports = {
-  getCookieSettings
+  getCookieSettings,
+  getCookieName
 }
