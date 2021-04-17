@@ -1,0 +1,19 @@
+.side-banner {
+  height: 100vh;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.side-banner__background {
+  background-image: linear-gradient(to bottom, rgba(58, 141, 255, 0.85), rgba(134, 185, 255, 0.85)), url(../../assets/bg-img.png);
+}
+
+.side-banner__bubble {
+  margin: 20px;
+}
