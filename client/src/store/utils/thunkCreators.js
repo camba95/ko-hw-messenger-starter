@@ -7,8 +7,10 @@ import {
   setSearchedUsers,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
+import { setHeader } from "../../utils/token";
+import { CSRF_HEADER } from "../../constants";
 
-axios.interceptors.request.use(async function (config) {
+axios.interceptors.request.use(async function(config) {
   const token = await localStorage.getItem("messenger-token");
   config.headers["x-access-token"] = token;
 
@@ -47,9 +49,12 @@ export const register = (credentials) => async (dispatch) => {
 export const login = (credentials) => async (dispatch) => {
   try {
     const { data } = await axios.post("/auth/login", credentials);
-    await localStorage.setItem("messenger-token", data.token);
-    dispatch(gotUser(data));
-    socket.emit("go-online", data.id);
+    if (data.success) {
+      setHeader(CSRF_HEADER, data.csrfToken);
+      dispatch(gotUser(data));
+      return socket.emit("go-online", data.id);
+    }
+    dispatch(gotUser({ error: "Server Error" }));
   } catch (error) {
     console.error(error);
     dispatch(gotUser({ error: error.response.data.error || "Server Error" }));
