@@ -8,7 +8,7 @@ import {
   Button,
   FormControl,
   TextField,
-  FormHelperText,
+  FormHelperText
 } from "@material-ui/core";
 import { register } from "./store/utils/thunkCreators";
 
@@ -39,14 +39,24 @@ const Login = (props) => {
   return (
     <Grid container justify="center">
       <Box>
-        <Grid container item>
+        <Grid container item justify="flex-end">
           <Typography>Need to log in?</Typography>
-          <Button onClick={() => history.push("/login")}>Login</Button>
+          <Button
+            size="large"
+            color="primary"
+            onClick={() => history.push("/login")}
+          >
+            Login
+          </Button>
         </Grid>
         <form onSubmit={handleRegister}>
           <Grid>
+            <Typography variant="h5">Create an account.</Typography>
             <Grid>
-              <FormControl>
+              <FormControl
+                fullWidth
+                margin="normal"
+              >
                 <TextField
                   aria-label="username"
                   label="Username"
@@ -57,7 +67,10 @@ const Login = (props) => {
               </FormControl>
             </Grid>
             <Grid>
-              <FormControl>
+              <FormControl
+                fullWidth
+                margin="normal"
+              >
                 <TextField
                   label="E-mail address"
                   aria-label="e-mail address"
@@ -68,7 +81,11 @@ const Login = (props) => {
               </FormControl>
             </Grid>
             <Grid>
-              <FormControl error={!!formErrorMessage.confirmPassword}>
+              <FormControl
+                fullWidth
+                margin="normal"
+                error={!!formErrorMessage.confirmPassword}
+              >
                 <TextField
                   aria-label="password"
                   label="Password"
@@ -83,7 +100,11 @@ const Login = (props) => {
               </FormControl>
             </Grid>
             <Grid>
-              <FormControl error={!!formErrorMessage.confirmPassword}>
+              <FormControl
+                fullWidth
+                margin="normal"
+                error={!!formErrorMessage.confirmPassword}
+              >
                 <TextField
                   label="Confirm Password"
                   aria-label="confirm password"
@@ -97,9 +118,20 @@ const Login = (props) => {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            <Button type="submit" variant="contained" size="large">
-              Create
-            </Button>
+            <Grid
+              container
+              item
+              justify="center"
+            >
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                color="primary"
+              >
+                Create
+              </Button>
+            </Grid>
           </Grid>
         </form>
       </Box>
