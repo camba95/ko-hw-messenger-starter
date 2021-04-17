@@ -10,6 +10,7 @@ import {
   TextField,
 } from "@material-ui/core";
 
+import SideBanner from "../../components/SideBanner";
 import { login } from "../../store/utils/thunkCreators";
 
 const Login = (props) => {
@@ -29,16 +30,31 @@ const Login = (props) => {
   }
 
   return (
-    <Grid container justify="center">
-      <Box>
-        <Grid container item>
-          <Typography>Need to register?</Typography>
-          <Button onClick={() => history.push("/register")}>Register</Button>
+    <SideBanner>
+      <Grid container direction="column" justify="flex-start" alignItems="stretch">
+        <Grid container item justify="flex-end" alignItems="center">
+          <Box m={2}>
+            <Typography>Need to register?</Typography>
+          </Box>
+          <Box m={2}>
+            <Button
+              size="large"
+              color="secondary"
+              variant="contained"
+              onClick={() => history.push("/register")}
+            >
+              Register
+              </Button>
+          </Box>
         </Grid>
         <form onSubmit={handleLogin}>
           <Grid>
             <Grid>
-              <FormControl margin="normal" required>
+              <FormControl
+                fullWidth
+                margin="normal"
+                required
+              >
                 <TextField
                   aria-label="username"
                   label="Username"
@@ -47,7 +63,11 @@ const Login = (props) => {
                 />
               </FormControl>
             </Grid>
-            <FormControl margin="normal" required>
+            <FormControl
+              fullWidth
+              margin="normal"
+              required
+            >
               <TextField
                 label="password"
                 aria-label="password"
@@ -55,15 +75,24 @@ const Login = (props) => {
                 name="password"
               />
             </FormControl>
-            <Grid>
-              <Button type="submit" variant="contained" size="large">
+            <Grid
+              container
+              item
+              justify="center"
+            >
+              <Button
+                color="primary"
+                type="submit"
+                variant="contained"
+                size="large"
+              >
                 Login
-              </Button>
+                </Button>
             </Grid>
           </Grid>
         </form>
-      </Box>
-    </Grid>
+      </Grid>
+    </SideBanner>
   );
 };
 
