@@ -25,7 +25,7 @@ const Login = (props) => {
       <Grid container direction="column" justify="flex-start" alignItems="stretch">
         <Grid container item justify="flex-end" alignItems="center">
           <Box m={2}>
-            <Typography>Need to register?</Typography>
+            <Typography>Don't have an account?</Typography>
           </Box>
           <Box m={2}>
             <Button
@@ -34,7 +34,7 @@ const Login = (props) => {
               variant="contained"
               onClick={() => history.push("/register")}
             >
-              Register
+              Create account
             </Button>
           </Box>
         </Grid>

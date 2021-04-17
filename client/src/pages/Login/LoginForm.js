@@ -30,7 +30,7 @@ const LoginForm = (props) => {
           >
             <TextField
               aria-label="username"
-              label="Username"
+              label="E-mail address"
               name="username"
               type="text"
             />
@@ -42,7 +42,7 @@ const LoginForm = (props) => {
           required
         >
           <TextField
-            label="password"
+            label="Password"
             aria-label="password"
             type="password"
             name="password"
