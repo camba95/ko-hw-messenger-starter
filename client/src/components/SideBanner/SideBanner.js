@@ -13,9 +13,9 @@ const SideBanner = (props) => {
       justify="flex-start"
       alignItems="stretch"
     >
-      <Grid item lg={5} md={5} justify="center">
-        <div class="side-banner side-banner__background">
-          <div class="side-banner__text-box">
+      <Grid item lg={5} md={5}>
+        <div className="side-banner side-banner__background">
+          <div className="side-banner__text-box">
             <Grid container justify="center">
               <div className="side-banner__bubble">
                 <BubbleIcon />

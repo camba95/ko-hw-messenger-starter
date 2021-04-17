@@ -5,25 +5,16 @@ import {
   Grid,
   Box,
   Typography,
-  Button,
-  FormControl,
-  TextField,
+  Button
 } from "@material-ui/core";
 
+import LoginForm from "./LoginForm";
 import SideBanner from "../../components/SideBanner";
 import { login } from "../../store/utils/thunkCreators";
 
 const Login = (props) => {
   const history = useHistory();
   const { user, login } = props;
-
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    const username = event.target.username.value;
-    const password = event.target.password.value;
-
-    await login({ username, password });
-  };
 
   if (user.id) {
     return <Redirect to="/home" />;
@@ -44,53 +35,16 @@ const Login = (props) => {
               onClick={() => history.push("/register")}
             >
               Register
-              </Button>
+            </Button>
           </Box>
         </Grid>
-        <form onSubmit={handleLogin}>
-          <Grid>
-            <Grid>
-              <FormControl
-                fullWidth
-                margin="normal"
-                required
-              >
-                <TextField
-                  aria-label="username"
-                  label="Username"
-                  name="username"
-                  type="text"
-                />
-              </FormControl>
-            </Grid>
-            <FormControl
-              fullWidth
-              margin="normal"
-              required
-            >
-              <TextField
-                label="password"
-                aria-label="password"
-                type="password"
-                name="password"
-              />
-            </FormControl>
-            <Grid
-              container
-              item
-              justify="center"
-            >
-              <Button
-                color="primary"
-                type="submit"
-                variant="contained"
-                size="large"
-              >
-                Login
-                </Button>
-            </Grid>
+        <Box height="100%" display="flex" flex="1">
+          <Grid container item justify="center" alignItems="center">
+            <Box width="60%">
+              <LoginForm login={login} />
+            </Box>
           </Grid>
-        </form>
+        </Box>
       </Grid>
     </SideBanner>
   );
