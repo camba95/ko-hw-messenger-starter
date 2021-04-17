@@ -7,8 +7,7 @@ import {
   setSearchedUsers,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
-import { setHeader, clearHeader } from "../../utils/token";
-import { CSRF_HEADER } from "../../constants";
+import { setCSRFToken, clearCSRFToken } from "../../utils/token";
 
 // USER THUNK CREATORS
 
@@ -31,7 +30,7 @@ export const register = (credentials) => async (dispatch) => {
   try {
     const { data } = await axios.post("/auth/register", credentials);
     if (data.success) {
-      setHeader(CSRF_HEADER, data.csrfToken);
+      await setCSRFToken(data.csrfToken);
       dispatch(gotUser(data));
       return socket.emit("go-online", data.id);
     }
@@ -46,7 +45,7 @@ export const login = (credentials) => async (dispatch) => {
   try {
     const { data } = await axios.post("/auth/login", credentials);
     if (data.success) {
-      setHeader(CSRF_HEADER, data.csrfToken);
+      await setCSRFToken(data.csrfToken);
       dispatch(gotUser(data));
       return socket.emit("go-online", data.id);
     }
@@ -63,7 +62,7 @@ export const logout = (id) => async (dispatch) => {
   } catch (error) {
     console.error(error);
   } finally {
-    clearHeader(CSRF_HEADER);
+    await clearCSRFToken();
     dispatch(gotUser({}));
     socket.emit("logout", id);
   }
