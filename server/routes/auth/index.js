@@ -2,7 +2,8 @@ const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const { User } = require("../../db/models");
 const { generateToken } = require("../../utils/token");
-const { getCookieSettings, getCookieName } = require("../../utils/cookies");
+const { getCookieSettings } = require("../../utils/cookies");
+const { COOKIE_NAME } = require("../../constants");
 
 router.post("/register", async (req, res, next) => {
   try {

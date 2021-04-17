@@ -1,3 +1,4 @@
+const { COOKIE_NAME } = require("../constants");
 const { isDevelopment } = require("./enviroment");
 
 const isDev = isDevelopment();
@@ -7,16 +8,12 @@ const COOKIE_SETTINGS = {
   secure: !isDev,
   sameSite: isDev ? undefined : "None"
 };
-const COOKIE_NAME = "hw_auth"
 
 const getCookieSettings = () => {
   const settings = { ...COOKIE_SETTINGS };
   return { cookieName: COOKIE_NAME, settings };
 };
 
-const getCookieName = () => COOKIE_NAME;
-
 module.exports = {
-  getCookieSettings,
-  getCookieName
-}
+  getCookieSettings
+};
