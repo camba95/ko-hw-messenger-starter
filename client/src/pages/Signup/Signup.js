@@ -5,7 +5,8 @@ import {
   Grid,
   Typography,
   Box,
-  Button
+  Button,
+  Container
 } from "@material-ui/core";
 
 import SignupForm from "./SignupForm";
@@ -25,7 +26,6 @@ const Signup = (props) => {
   return (
     <Grid
       container
-      direction="row"
       justify="flex-start"
       alignItems="stretch"
     >
@@ -43,20 +43,31 @@ const Signup = (props) => {
           </div>
         </div>
       </Grid>
-      <Grid md={7} lg={7}>
-        <Box>
-          <Grid container item justify="flex-end">
-            <Typography>Need to log in?</Typography>
-            <Button
-              size="large"
-              color="primary"
-              onClick={() => history.push("/login")}
-            >
-              Login
-            </Button>
+      <Grid item md={7} lg={7}>
+        <Grid container direction="column" justify="flex-start" alignItems="stretch">
+          <Grid container item justify="flex-end" alignItems="center">
+            <Box m={2}>
+              <Typography>Need to log in?</Typography>
+            </Box>
+            <Box m={2}>
+              <Button
+                size="large"
+                color="secondary"
+                variant="contained"
+                onClick={() => history.push("/login")}
+              >
+                Login
+                </Button>
+            </Box>
           </Grid>
-          <SignupForm register={register} />
-        </Box>
+          <Box height="100%" display="flex" flex="1">
+            <Grid container item justify="center" alignItems="center">
+              <Box width="60%">
+                <SignupForm register={register} />
+              </Box>
+            </Grid>
+          </Box>
+        </Grid>
       </Grid>
     </Grid>
   );

@@ -15,6 +15,11 @@ export const theme = createMuiTheme({
       input: {
         fontWeight: "bold"
       }
+    },
+    MuiButton: {
+      containedSecondary: {
+        color: "#3A8DFF"
+      }
     }
   },
   palette: {
