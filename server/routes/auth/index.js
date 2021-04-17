@@ -71,7 +71,8 @@ router.post("/login", async (req, res, next) => {
 
     res.json({
       success: true,
-      csrfToken
+      csrfToken,
+      ...user.dataValues
     });
 
   } catch (error) {
