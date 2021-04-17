@@ -10,13 +10,6 @@ import { gotUser, setFetchingStatus } from "../user";
 import { setHeader, clearHeader } from "../../utils/token";
 import { CSRF_HEADER } from "../../constants";
 
-axios.interceptors.request.use(async function(config) {
-  const token = await localStorage.getItem("messenger-token");
-  config.headers["x-access-token"] = token;
-
-  return config;
-});
-
 // USER THUNK CREATORS
 
 export const fetchUser = () => async (dispatch) => {
@@ -37,9 +30,12 @@ export const fetchUser = () => async (dispatch) => {
 export const register = (credentials) => async (dispatch) => {
   try {
     const { data } = await axios.post("/auth/register", credentials);
-    await localStorage.setItem("messenger-token", data.token);
-    dispatch(gotUser(data));
-    socket.emit("go-online", data.id);
+    if (data.success) {
+      setHeader(CSRF_HEADER, data.csrfToken);
+      dispatch(gotUser(data));
+      return socket.emit("go-online", data.id);
+    }
+    dispatch(gotUser({ error: "Server Error" }));
   } catch (error) {
     console.error(error);
     dispatch(gotUser({ error: error.response.data.error || "Server Error" }));

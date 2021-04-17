@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const jwt = require("jsonwebtoken");
 const { User } = require("../../db/models");
 const { generateToken } = require("../../utils/token");
 const { getCookieSettings } = require("../../utils/cookies");
@@ -24,14 +23,16 @@ router.post("/register", async (req, res, next) => {
 
     const user = await User.create(req.body);
 
-    const token = jwt.sign(
-      { id: user.dataValues.id },
-      process.env.SESSION_SECRET,
-      { expiresIn: 86400 }
-    );
+    const payload = { id: user.dataValues.id };
+    const { token, csrfToken } = generateToken(payload);
+    const { cookieName, settings } = getCookieSettings();
+
+    res.cookie(cookieName, token, settings);
+
     res.json({
-      ...user.dataValues,
-      token,
+      success: true,
+      csrfToken,
+      ...user.dataValues
     });
   } catch (error) {
     if (error.name === "SequelizeUniqueConstraintError") {
