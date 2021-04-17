@@ -12,4 +12,13 @@ const generateToken = (payload) => {
   return { csrfToken, token };
 };
 
-module.exports = { generateToken }
+const verifyToken = (token) => {
+  try {
+    return jwt.verify(token, process.env.SESSION_SECRET);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+module.exports = { generateToken, verifyToken };
