@@ -1,11 +1,15 @@
 const socketIO = require("socket.io");
 const onlineUsers = require("../../onlineUsers");
+const { auth } = require("../../middlewares/auth-sockets");
 
 const config = (server) => {
   return socketIO(server);
 };
 
 const setListeners = (io) => {
+  // set auth middleware
+  io.use(auth());
+
   io.on("connection", (socket) => {
     socket.on("go-online", (id) => {
       if (!onlineUsers.includes(id)) {
