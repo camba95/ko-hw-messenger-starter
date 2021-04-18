@@ -2,7 +2,8 @@
 
 /* Sets up the environment variables from your .env file*/
 require("dotenv").config();
-const { config, setListeners } = require("../services/sockets");
+const sockets = require("../services/sockets");
+const cache = require("../services/cache");
 
 /**
  * Module dependencies.
@@ -29,8 +30,10 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces, and sync database.
  */
 
-const io = config(server);
-setListeners(io);
+const io = sockets.config(server);
+sockets.setListeners(io);
+
+cache.connect();
 
 sessionStore
   .sync()
