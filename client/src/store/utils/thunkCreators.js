@@ -1,5 +1,5 @@
 import axios from "axios";
-import socket from "../../services/socket";
+import * as socket from "../../services/socket";
 import {
   gotConversations,
   addConversation,
@@ -26,13 +26,18 @@ export const fetchUser = () => async (dispatch) => {
   }
 };
 
+const onAuthSuccess = async (data, dispatch) => {
+  await setCSRFToken(data.csrfToken);
+  dispatch(gotUser(data));
+  socket.connect(data.csrfToken);
+  socket.emit("go-online", data.id);
+};
+
 export const register = (credentials) => async (dispatch) => {
   try {
     const { data } = await axios.post("/auth/register", credentials);
     if (data.success) {
-      await setCSRFToken(data.csrfToken);
-      dispatch(gotUser(data));
-      return socket.emit("go-online", data.id);
+      return await onAuthSuccess(data, dispatch);
     }
     dispatch(gotUser({ error: "Server Error" }));
   } catch (error) {
@@ -45,9 +50,7 @@ export const login = (credentials) => async (dispatch) => {
   try {
     const { data } = await axios.post("/auth/login", credentials);
     if (data.success) {
-      await setCSRFToken(data.csrfToken);
-      dispatch(gotUser(data));
-      return socket.emit("go-online", data.id);
+      return await onAuthSuccess(data, dispatch);
     }
     dispatch(gotUser({ error: "Server Error" }));
   } catch (error) {
@@ -65,6 +68,7 @@ export const logout = (id) => async (dispatch) => {
     await clearCSRFToken();
     dispatch(gotUser({}));
     socket.emit("logout", id);
+    socket.disconnect();
   }
 };
 
