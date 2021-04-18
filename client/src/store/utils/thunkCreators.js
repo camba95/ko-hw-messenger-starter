@@ -1,5 +1,5 @@
 import axios from "axios";
-import socket from "../../socket";
+import socket from "../../services/socket";
 import {
   gotConversations,
   addConversation,
