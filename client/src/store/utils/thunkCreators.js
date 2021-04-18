@@ -122,3 +122,17 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
     console.error(error);
   }
 };
+
+// SOCKETS THUNK CREATORS
+
+export const connectSocket = async (dispatch) => {
+  try {
+    const { data } = await axios.post('/api/sockets');
+    if (data.success) {
+      socket.connect(data.csrfToken);
+      socket.emit("go-online", data.id);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
