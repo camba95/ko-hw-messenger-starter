@@ -3,6 +3,7 @@ const { User } = require("../../db/models");
 const { generateToken } = require("../../utils/token");
 const { getCookieSettings } = require("../../utils/cookies");
 const { COOKIE_NAME } = require("../../constants");
+const cache = require("../../services/cache");
 
 router.post("/register", async (req, res, next) => {
   try {
@@ -26,6 +27,9 @@ router.post("/register", async (req, res, next) => {
     const payload = { id: user.dataValues.id };
     const { token, csrfToken } = generateToken(payload);
     const { cookieName, settings } = getCookieSettings();
+
+    await cache.set(csrfToken, "userId", user.dataValues.id);
+    await cache.expire(csrfToken, 30);
 
     res.cookie(cookieName, token, settings);
 
@@ -68,6 +72,9 @@ router.post("/login", async (req, res, next) => {
     const payload = { id: user.dataValues.id };
     const { token, csrfToken } = generateToken(payload);
     const { cookieName, settings } = getCookieSettings();
+
+    await cache.set(csrfToken, "userId", user.dataValues.id);
+    await cache.expire(csrfToken, 30);
 
     res.cookie(cookieName, token, settings);
 
