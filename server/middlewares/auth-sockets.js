@@ -5,7 +5,6 @@ const auth = () => {
   return async (socket, next) => {
     try {
       const token = socket.handshake.auth.token;
-      console.info(token);
 
       if (!token) {
         console.debug('Token not provided');
