@@ -2,7 +2,16 @@
 
 A one-to-one realtime chat app.
 
+## Requirements
+
+- Postgres 11
+- Redis 6
+
+If you are familiar with docker you can use this file `server/docker/docker-compose.yml` to run requirements.
+
 ## Running Application Locally
+
+Create a .env file in the server directory using the template `.env.example`.
 
 ```
 psql
@@ -16,10 +25,4 @@ npm install
 npm run seed
 
 npm run dev
-```
-
-Create a .env file in the server directory and add your session secret
-
-```
-SESSION_SECRET = "your session secret"
 ```
