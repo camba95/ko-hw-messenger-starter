@@ -29,7 +29,7 @@ const auth = () => {
       });
 
       if (!user) {
-        console.debug('No user found');
+        console.debug('User not found');
         return res.status(401).send();
       }
 
