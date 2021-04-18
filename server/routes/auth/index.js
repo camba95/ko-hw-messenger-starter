@@ -28,7 +28,7 @@ router.post("/register", async (req, res, next) => {
     const { token, csrfToken } = generateToken(payload);
     const { cookieName, settings } = getCookieSettings();
 
-    await cache.set(csrfToken, "userId", user.dataValues.id);
+    await cache.set(csrfToken, "id", user.dataValues.id);
     await cache.expire(csrfToken, 30);
 
     res.cookie(cookieName, token, settings);
@@ -73,7 +73,7 @@ router.post("/login", async (req, res, next) => {
     const { token, csrfToken } = generateToken(payload);
     const { cookieName, settings } = getCookieSettings();
 
-    await cache.set(csrfToken, "userId", user.dataValues.id);
+    await cache.set(csrfToken, "id", user.dataValues.id);
     await cache.expire(csrfToken, 30);
 
     res.cookie(cookieName, token, settings);
