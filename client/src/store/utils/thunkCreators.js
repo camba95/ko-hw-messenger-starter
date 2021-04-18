@@ -1,4 +1,3 @@
-import axios from "axios";
 import * as socket from "../../services/socket";
 import {
   gotConversations,
@@ -7,14 +6,15 @@ import {
   setSearchedUsers,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
-import { setCSRFToken, clearCSRFToken } from "../../utils/token";
+import * as api from "../../services/api";
+import { CSRF_HEADER } from "../../constants";
 
 // USER THUNK CREATORS
 
 export const fetchUser = () => async (dispatch) => {
   dispatch(setFetchingStatus(true));
   try {
-    const { data } = await axios.get("/api/users/current");
+    const { data } = await api.getCurrentUser();
     dispatch(gotUser(data));
     if (data.id) {
       socket.emit("go-online", data.id);
@@ -27,7 +27,7 @@ export const fetchUser = () => async (dispatch) => {
 };
 
 const onAuthSuccess = async (data, dispatch) => {
-  await setCSRFToken(data.csrfToken);
+  localStorage.setItem(CSRF_HEADER, data.csrfToken);
   dispatch(gotUser(data));
   socket.connect(data.csrfToken);
   socket.emit("go-online", data.id);
@@ -35,7 +35,7 @@ const onAuthSuccess = async (data, dispatch) => {
 
 export const register = (credentials) => async (dispatch) => {
   try {
-    const { data } = await axios.post("/auth/register", credentials);
+    const { data } = await api.register(credentials);
     if (data.success) {
       return await onAuthSuccess(data, dispatch);
     }
@@ -48,7 +48,7 @@ export const register = (credentials) => async (dispatch) => {
 
 export const login = (credentials) => async (dispatch) => {
   try {
-    const { data } = await axios.post("/auth/login", credentials);
+    const { data } = await api.login(credentials);
     if (data.success) {
       return await onAuthSuccess(data, dispatch);
     }
@@ -61,11 +61,11 @@ export const login = (credentials) => async (dispatch) => {
 
 export const logout = (id) => async (dispatch) => {
   try {
-    await axios.delete("/auth/logout");
+    await api.logout();
   } catch (error) {
     console.error(error);
   } finally {
-    await clearCSRFToken();
+    localStorage.removeItem(CSRF_HEADER);
     dispatch(gotUser({}));
     socket.emit("logout", id);
     socket.disconnect();
@@ -76,7 +76,7 @@ export const logout = (id) => async (dispatch) => {
 
 export const fetchConversations = () => async (dispatch) => {
   try {
-    const { data } = await axios.get("/api/conversations");
+    const { data } = await api.fetchConversations();
     dispatch(gotConversations(data));
   } catch (error) {
     console.error(error);
@@ -84,7 +84,7 @@ export const fetchConversations = () => async (dispatch) => {
 };
 
 const saveMessage = async (body) => {
-  const { data } = await axios.post("/api/messages", body);
+  const { data } = await api.saveMessages(body);
   return data;
 };
 
@@ -116,7 +116,7 @@ export const postMessage = (body) => async (dispatch) => {
 
 export const searchUsers = (searchTerm) => async (dispatch) => {
   try {
-    const { data } = await axios.get(`/api/users/${searchTerm}`);
+    const { data } = await api.searchUsers(searchTerm);
     dispatch(setSearchedUsers(data));
   } catch (error) {
     console.error(error);
@@ -125,9 +125,9 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 
 // SOCKETS THUNK CREATORS
 
-export const connectSocket = async (dispatch) => {
+export const connectSocket = async () => {
   try {
-    const { data } = await axios.post('/api/sockets');
+    const { data } = await api.authSocket();
     if (data.success) {
       socket.connect(data.csrfToken);
       socket.emit("go-online", data.id);
