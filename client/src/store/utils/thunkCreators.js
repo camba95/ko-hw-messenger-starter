@@ -7,7 +7,7 @@ import {
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 import * as api from "../../services/api";
-import { CSRF_HEADER } from "../../constants";
+import { CSRF_HEADER, SOCKET_SESSION } from "../../constants";
 
 // USER THUNK CREATORS
 
@@ -66,6 +66,7 @@ export const logout = (id) => async (dispatch) => {
     console.error(error);
   } finally {
     localStorage.removeItem(CSRF_HEADER);
+    localStorage.removeItem(SOCKET_SESSION);
     dispatch(gotUser({}));
     socket.emit("logout", id);
     socket.disconnect();
@@ -125,13 +126,16 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 
 // SOCKETS THUNK CREATORS
 
-export const connectSocket = async () => {
+export const connectSocket = (userId) => async () => {
   try {
-    const { data } = await api.authSocket();
-    if (data.success) {
+    let sessionId = localStorage.getItem(SOCKET_SESSION);
+    if (sessionId) {
+      socket.reconnect(sessionId, userId);
+    } else {
+      const { data } = await api.authSocket();
       socket.connect(data.csrfToken);
-      socket.emit("go-online", data.id);
     }
+    socket.emit("go-online", userId);
   } catch (error) {
     console.error(error);
   }
