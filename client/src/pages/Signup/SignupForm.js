@@ -73,9 +73,11 @@ const SingupForm = (props) => {
               name="password"
               required
             />
-            <FormHelperText>
-              {formErrorMessage.confirmPassword}
-            </FormHelperText>
+            {formErrorMessage.confirmPassword && (
+              <FormHelperText>
+                {formErrorMessage.confirmPassword}
+              </FormHelperText>
+            )}
           </FormControl>
         </Grid>
         <Grid>
@@ -92,9 +94,11 @@ const SingupForm = (props) => {
               name="confirmPassword"
               required
             />
-            <FormHelperText>
-              {formErrorMessage.confirmPassword}
-            </FormHelperText>
+            {formErrorMessage.confirmPassword && (
+              <FormHelperText>
+                {formErrorMessage.confirmPassword}
+              </FormHelperText>
+            )}
           </FormControl>
         </Grid>
         <Grid

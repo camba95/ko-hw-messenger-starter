@@ -1,11 +1,35 @@
 import React from "react";
+import classNames from "classnames";
 import { Grid, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 
 import { ReactComponent as BubbleIcon } from "../../assets/bubble.svg";
 
+import sideBannerImg from "../../assets/bg-img.png"
 import "./SideBanner.css";
 
+const useStyles = makeStyles({
+  sideBanner: {
+    height: "100vh",
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "0 10vh",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+  },
+  sideBannerBackground: {
+    backgroundImage: `linear-gradient(to bottom, rgba(58, 141, 255, 0.85), rgba(134, 185, 255, 0.85)), url(${sideBannerImg})`,
+  },
+  sideBannerBubble: {
+    margin: '20px',
+  }
+});
+
 const SideBanner = (props) => {
+  const classes = useStyles();
   const { children } = props;
   return (
     <Grid
@@ -14,10 +38,10 @@ const SideBanner = (props) => {
       alignItems="stretch"
     >
       <Grid item lg={5} md={5}>
-        <div className="side-banner side-banner__background">
-          <div className="side-banner__text-box">
+        <div className={classNames(classes.sideBanner, classes.sideBannerBackground)}>
+          <div >
             <Grid container justify="center">
-              <div className="side-banner__bubble">
+              <div className={classes.sideBannerBubble}>
                 <BubbleIcon />
               </div>
               <Typography variant="h4" align="center" color="secondary">
