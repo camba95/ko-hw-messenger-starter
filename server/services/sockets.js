@@ -1,7 +1,7 @@
 const socketIO = require("socket.io");
-const onlineUsers = require("../../onlineUsers");
-const { auth } = require("../../middlewares/auth-sockets");
-const cache = require("../cache");
+const onlineUsers = require("../onlineUsers");
+const { auth } = require("../middlewares/auth-sockets");
+const cache = require("./cache");
 
 const config = (server) => {
   return socketIO(server);
@@ -28,6 +28,7 @@ const setListeners = (io) => {
     });
 
     socket.on("new-message", (data) => {
+      console.info(onlineUsers);
       socket.broadcast.emit("new-message", {
         message: data.message,
         sender: data.sender,
