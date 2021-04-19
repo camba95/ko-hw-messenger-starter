@@ -31,6 +31,7 @@ export const reconnect = (sessionId, userId) => {
 export const disconnect = () => {
   const socket = getSocket();
   socket.auth = null;
+  socket.userId = null;
   socket.disconnect();
 };
 

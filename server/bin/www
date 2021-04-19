@@ -4,12 +4,12 @@
 require("dotenv").config();
 const sockets = require("../services/sockets");
 const cache = require("../services/cache");
+const { app, sessionStore } = require("../app");
 
 /**
  * Module dependencies.
  */
 
-const { app, sessionStore } = require("../app");
 const http = require("http");
 const db = require("../db");
 
