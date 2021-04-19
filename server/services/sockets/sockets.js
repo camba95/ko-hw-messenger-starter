@@ -1,6 +1,7 @@
 const socketIO = require("socket.io");
 const onlineUsers = require("../../onlineUsers");
 const { auth } = require("../../middlewares/auth-sockets");
+const cache = require("../cache");
 
 const config = (server) => {
   return socketIO(server);
@@ -26,12 +27,34 @@ const setListeners = (io) => {
       });
     });
 
+    socket.on("new-message", (data) => {
+      socket.broadcast.emit("new-message", {
+        message: data.message,
+        sender: data.sender,
+      });
+    });
+
     socket.on("logout", (id) => {
       if (onlineUsers.includes(id)) {
         userIndex = onlineUsers.indexOf(id);
         onlineUsers.splice(userIndex, 1);
         socket.broadcast.emit("remove-offline-user", id);
       }
+    });
+
+    socket.on("disconnect", async () => {
+      if (onlineUsers.includes(socket.userId)) {
+        userIndex = onlineUsers.indexOf(socket.userId);
+        onlineUsers.splice(userIndex, 1);
+      }
+      const data = await cache.get(socket.sessionId);
+      await cache.del(socket.sessionId);
+      socket.broadcast.emit("remove-offline-user", data);
+    });
+
+    socket.emit("session", {
+      sessionId: socket.sessionId,
+      userId: socket.userId,
     });
   });
 };
