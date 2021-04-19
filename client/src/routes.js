@@ -26,10 +26,10 @@ const Routes = (props) => {
       return setSnackBarOpen(true);
     }
     if (user.id) {
-      connectSocket();
+      connectSocket(user.id);
     }
 
-  }, [user, user.error]);
+  }, [user.id, user.error]);
 
   if (props.user.isFetchingUser) {
     return <div>Loading...</div>;
@@ -69,8 +69,8 @@ const mapDispatchToProps = (dispatch) => {
     fetchUser() {
       dispatch(fetchUser());
     },
-    connectSocket() {
-      dispatch(connectSocket());
+    connectSocket(id) {
+      dispatch(connectSocket(id));
     },
   };
 };
