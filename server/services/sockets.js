@@ -27,14 +27,6 @@ const setListeners = (io) => {
       });
     });
 
-    socket.on("new-message", (data) => {
-      console.info(onlineUsers);
-      socket.broadcast.emit("new-message", {
-        message: data.message,
-        sender: data.sender,
-      });
-    });
-
     socket.on("logout", (id) => {
       if (onlineUsers.includes(id)) {
         userIndex = onlineUsers.indexOf(id);
