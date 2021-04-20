@@ -20,10 +20,10 @@ const setListeners = (io) => {
       socket.broadcast.emit("add-online-user", id);
     });
 
-    socket.on("new-message", (data) => {
-      socket.broadcast.emit("new-message", {
-        message: data.message,
-        sender: data.sender,
+    socket.on("new-message", ({ message, recipientId, sender }) => {
+      socket.to(recipientId).emit("new-message", {
+        message,
+        sender,
       });
     });
 
@@ -44,6 +44,8 @@ const setListeners = (io) => {
       await cache.del(socket.sessionId);
       socket.broadcast.emit("remove-offline-user", data);
     });
+
+    socket.join(socket.userId);
 
     socket.emit("session", {
       sessionId: socket.sessionId,
