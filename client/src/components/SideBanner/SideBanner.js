@@ -6,7 +6,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { ReactComponent as BubbleIcon } from "../../assets/bubble.svg";
 
 import sideBannerImg from "../../assets/bg-img.png"
-import "./SideBanner.css";
 
 const useStyles = makeStyles({
   sideBanner: {
