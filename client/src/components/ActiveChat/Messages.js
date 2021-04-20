@@ -14,6 +14,7 @@ const renderMessage = (conversation, userId) => {
         text={message.text}
         time={time}
         lastSeen={lastSeen}
+        otherUser={otherUser}
       />
     ) : (
       <OtherUserBubble
