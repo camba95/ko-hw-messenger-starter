@@ -1,6 +1,6 @@
 require("dotenv").config();
 const db = require("./db");
-const { User } = require("./models");
+const { User, LastSeen } = require("./models");
 const Conversation = require("./models/conversation");
 const Message = require("./models/message");
 
@@ -29,20 +29,28 @@ async function seed() {
     user2Id: santiago.id,
   });
 
-  await Message.create({
+  const thomasLastSeenMessage = await Message.create({
     conversationId: santaigoConvo.id,
     senderId: santiago.id,
     text: "Where are you from?",
   });
+
   await Message.create({
     conversationId: santaigoConvo.id,
     senderId: thomas.id,
     text: "I'm from New York",
   });
+
   await Message.create({
     conversationId: santaigoConvo.id,
     senderId: santiago.id,
     text: "Share photo of your city, please",
+  });
+
+  await LastSeen.create({
+    conversationId: santaigoConvo.id,
+    userId: thomas.id,
+    messageId: thomasLastSeenMessage.id
   });
 
   const chiumbo = await User.create({
@@ -52,6 +60,7 @@ async function seed() {
     photoUrl:
       "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914468/messenger/8bc2e13b8ab74765fd57f0880f318eed1c3fb001_fownwt.png",
   });
+
   const chiumboConvo = await Conversation.create({
     user1Id: chiumbo.id,
     user2Id: thomas.id,
