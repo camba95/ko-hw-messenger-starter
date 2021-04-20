@@ -26,11 +26,14 @@ router.get("/", async (req, res, next) => {
         {
           model: LastSeen,
           where: {
-            userId: {
-              [Op.not]: userId,
-            },
+            [Op.or]: {
+              userId: {
+                [Op.not]: userId,
+              },
+            }
           },
-          attributes: ["id", "userId", "conversationId", "messageId"],
+          attributes: ["messageId"],
+          required: false
         },
         {
           model: User,
@@ -77,6 +80,7 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser.online = false;
       }
 
+      convoJSON.lastSeens = convoJSON.lastSeens[0];
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages[0].text;
       conversations[i] = convoJSON;
