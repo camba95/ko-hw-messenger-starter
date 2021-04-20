@@ -5,6 +5,7 @@ import {
   setNewMessage,
   setSearchedUsers,
 } from "../conversations";
+import { setActiveChat } from "../activeConversation";
 import { gotUser, setFetchingStatus } from "../user";
 import * as api from "../../services/api";
 import { CSRF_HEADER, SOCKET_SESSION } from "../../constants";
@@ -122,6 +123,11 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   } catch (error) {
     console.error(error);
   }
+};
+
+export const selectChat = (username, data) => async (dispatch) => {
+  socket.emit("last-seen", data);
+  dispatch(setActiveChat(username));
 };
 
 // SOCKETS THUNK CREATORS
