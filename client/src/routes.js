@@ -23,7 +23,8 @@ const Routes = (props) => {
       } else {
         setErrorMessage("Internal Server Error. Please try again");
       }
-      return setSnackBarOpen(true);
+      setSnackBarOpen(true);
+      return;
     }
     if (user.id) {
       connectSocket(user.id);
