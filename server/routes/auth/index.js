@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const { User } = require("../../db/models");
-const jwt = require("jsonwebtoken");
+const { generateToken } = require("../../utils/token");
+const { getCookieSettings } = require("../../utils/cookies");
+const { COOKIE_NAME } = require("../../constants");
 
 router.post("/register", async (req, res, next) => {
   try {
@@ -21,14 +23,16 @@ router.post("/register", async (req, res, next) => {
 
     const user = await User.create(req.body);
 
-    const token = jwt.sign(
-      { id: user.dataValues.id },
-      process.env.SESSION_SECRET,
-      { expiresIn: 86400 }
-    );
+    const payload = { id: user.dataValues.id };
+    const { token, csrfToken } = generateToken(payload);
+    const { cookieName, settings } = getCookieSettings();
+
+    res.cookie(cookieName, token, settings);
+
     res.json({
-      ...user.dataValues,
-      token,
+      success: true,
+      csrfToken,
+      ...user.dataValues
     });
   } catch (error) {
     if (error.name === "SequelizeUniqueConstraintError") {
@@ -54,36 +58,33 @@ router.post("/login", async (req, res, next) => {
 
     if (!user) {
       console.log({ error: `No user found for username: ${username}` });
-      res.status(401).json({ error: "Wrong username and/or password" });
-    } else if (!user.correctPassword(password)) {
-      console.log({ error: "Wrong username and/or password" });
-      res.status(401).json({ error: "Wrong username and/or password" });
-    } else {
-      const token = jwt.sign(
-        { id: user.dataValues.id },
-        process.env.SESSION_SECRET,
-        { expiresIn: 86400 }
-      );
-      res.json({
-        ...user.dataValues,
-        token,
-      });
+      return res.status(401).json({ error: "Wrong username and/or password" });
     }
+    if (!user.correctPassword(password)) {
+      console.log({ error: "Wrong username and/or password" });
+      return res.status(401).json({ error: "Wrong username and/or password" });
+    }
+
+    const payload = { id: user.dataValues.id };
+    const { token, csrfToken } = generateToken(payload);
+    const { cookieName, settings } = getCookieSettings();
+
+    res.cookie(cookieName, token, settings);
+
+    res.json({
+      success: true,
+      csrfToken,
+      ...user.dataValues
+    });
+
   } catch (error) {
     next(error);
   }
 });
 
-router.delete("/logout", (req, res, next) => {
+router.delete("/logout", (req, res) => {
+  req.res.clearCookie(COOKIE_NAME);
   res.sendStatus(204);
-});
-
-router.get("/user", (req, res, next) => {
-  if (req.user) {
-    return res.json(req.user);
-  } else {
-    return res.json({});
-  }
 });
 
 module.exports = router;
