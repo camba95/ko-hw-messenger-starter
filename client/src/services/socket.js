@@ -5,6 +5,7 @@ import {
   setNewMessage,
   removeOfflineUser,
   addOnlineUser,
+  setLastSeen
 } from "../store/conversations";
 
 const socket = io(window.location.origin, { autoConnect: false });
@@ -54,6 +55,10 @@ const setListeners = (socket) => {
 
     socket.on("new-message", (data) => {
       store.dispatch(setNewMessage(data.message, data.sender));
+    });
+
+    socket.on("last-seen", (data) => {
+      store.dispatch(setLastSeen(data));
     });
 
     socket.on("session", ({ sessionId, userId }) => {

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
-import { setActiveChat } from "../../store/activeConversation";
+import { selectChat } from "../../store/utils/thunkCreators";
 import { connect } from "react-redux";
 
 const styles = {
@@ -21,7 +21,17 @@ const styles = {
 
 class Chat extends Component {
   handleClick = async (conversation) => {
-    await this.props.setActiveChat(conversation.otherUser.username);
+    const { userId } = this.props;
+    const username = conversation.otherUser.username
+    const otherId = conversation.otherUser.id
+    const messages = (conversation.messages || []);
+    const data = {
+      userId,
+      otherId,
+      conversationId: conversation.id,
+      messageId: messages[messages.length - 1].id
+    };
+    await this.props.selectChat(username, data);
   };
 
   render() {
@@ -46,8 +56,8 @@ class Chat extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setActiveChat: (id) => {
-      dispatch(setActiveChat(id));
+    selectChat: (username, data) => {
+      dispatch(selectChat(username, data));
     },
   };
 };
