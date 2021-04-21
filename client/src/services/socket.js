@@ -14,6 +14,7 @@ export const getSocket = () => socket;
 
 export const connect = (token) => {
   const socket = getSocket();
+  socket.removeAllListeners();
   socket.auth = { token };
   socket.connect();
 
@@ -22,6 +23,7 @@ export const connect = (token) => {
 
 export const reconnect = (sessionId, userId) => {
   const socket = getSocket();
+  socket.removeAllListeners();
   socket.auth = { sessionId };
   socket.userId = userId;
   socket.connect();
@@ -33,6 +35,7 @@ export const disconnect = () => {
   const socket = getSocket();
   socket.auth = null;
   socket.userId = null;
+  socket.removeAllListeners();
   socket.disconnect();
 };
 
@@ -55,6 +58,11 @@ const setListeners = (socket) => {
 
     socket.on("new-message", (data) => {
       store.dispatch(setNewMessage(data.message, data.sender));
+      socket.emit("last-seen", {
+        conversationId: data.lastMessage.conversationId,
+        messageId: data.lastMessage.messageId,
+        otherId: data.lastMessage.userId
+      });
     });
 
     socket.on("last-seen", (data) => {

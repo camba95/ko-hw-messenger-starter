@@ -93,7 +93,7 @@ const saveMessage = async (body) => {
 const sendMessage = (data, body) => {
   socket.emit("new-message", {
     message: data.message,
-    recipientId: body.recipientId,
+    lastMessage: data.lastMessage,
     sender: data.sender,
   });
 };
@@ -125,9 +125,10 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
-export const selectChat = (username, data) => async (dispatch) => {
+export const selectChat = (username, data, conversationId) => async (dispatch) => {
+  socket.emit("switch-room", { room: conversationId });
   socket.emit("last-seen", data);
-  dispatch(setActiveChat(username));
+  dispatch(setActiveChat({ username, conversationId }));
 };
 
 // SOCKETS THUNK CREATORS

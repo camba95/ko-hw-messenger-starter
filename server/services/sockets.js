@@ -2,7 +2,7 @@ const socketIO = require("socket.io");
 const onlineUsers = require("../onlineUsers");
 const { auth } = require("../middlewares/auth-sockets");
 const cache = require("./cache");
-const { LastSeen } = require("../db/models");
+const { LastSeen, LastMessage } = require("../db/models");
 
 const config = (server) => {
   return socketIO(server);
@@ -21,24 +21,38 @@ const setListeners = (io) => {
       socket.broadcast.emit("add-online-user", id);
     });
 
-    socket.on("new-message", ({ message, recipientId, sender }) => {
-      socket.to(recipientId).emit("new-message", {
+    socket.on("new-message", ({ message, sender, lastMessage }) => {
+      const { conversationId } = lastMessage;
+      socket.to(conversationId).emit("new-message", {
         message,
         sender,
+        lastMessage
       });
     });
 
     socket.on("last-seen", async ({ userId, otherId, conversationId, messageId }) => {
       await LastSeen.saveLastSeen({
-        userId,
+        userId: userId || socket.userId,
         conversationId,
         messageId
       });
-      socket.to(otherId).emit("last-seen", {
-        messageId,
-        userId,
-        conversationId
+
+      if (!otherId) return;
+
+      const lastMessage = await LastMessage.findOne({
+        where: {
+          userId: otherId,
+          conversationId
+        }
       });
+
+      if (!lastMessage || lastMessage.messageId === messageId) {
+        socket.to(otherId).emit("last-seen", {
+          messageId,
+          userId,
+          conversationId
+        });
+      }
     });
 
     socket.on("logout", (id) => {
@@ -59,7 +73,19 @@ const setListeners = (io) => {
       socket.broadcast.emit("remove-offline-user", data);
     });
 
-    socket.join(socket.userId);
+    socket.on("switch-room", ({ room }) => {
+      if (socket.room) {
+        socket.leave(socket.room, () => {
+          socket.join(room, () => {
+            socket.room = room;
+          });
+        });
+        return;
+      }
+      socket.join(room, () => {
+        socket.room = room;
+      });
+    });
 
     socket.emit("session", {
       sessionId: socket.sessionId,

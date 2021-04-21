@@ -24,14 +24,14 @@ class Chat extends Component {
     const { userId } = this.props;
     const username = conversation.otherUser.username
     const otherId = conversation.otherUser.id
-    const messages = (conversation.messages || []);
+    const lastMessage = conversation.lastOtherUserMessage || {};
     const data = {
       userId,
       otherId,
       conversationId: conversation.id,
-      messageId: messages[messages.length - 1].id
+      messageId: lastMessage.messageId
     };
-    await this.props.selectChat(username, data);
+    await this.props.selectChat(username, data, conversation.id);
   };
 
   render() {
