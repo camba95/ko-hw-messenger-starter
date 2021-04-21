@@ -29,10 +29,10 @@ const setListeners = (io) => {
     });
 
     socket.on("last-seen", async ({ userId, otherId, conversationId, messageId }) => {
-      await LastSeen.upsert({
-        messageId,
+      await LastSeen.saveLastSeen({
         userId,
-        conversationId
+        conversationId,
+        messageId
       });
       socket.to(otherId).emit("last-seen", {
         messageId,
