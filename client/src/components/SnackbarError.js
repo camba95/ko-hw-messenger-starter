@@ -3,7 +3,7 @@ import { Button, Snackbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Close from "@material-ui/icons/Close";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   snackbar: {
     backgroundColor: "red",
     fontWeight: "bold"
