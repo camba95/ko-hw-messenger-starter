@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
 
-const LastSeen = db.define("lastSeen", {
+const LastMessage = db.define("lastMessage", {
   userId: {
     type: Sequelize.INTEGER,
     primaryKey: true,
@@ -15,4 +15,4 @@ const LastSeen = db.define("lastSeen", {
   }
 });
 
-module.exports = LastSeen;
+module.exports = LastMessage;
