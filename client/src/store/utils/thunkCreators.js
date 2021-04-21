@@ -90,7 +90,7 @@ const saveMessage = async (body) => {
   return data;
 };
 
-const sendMessage = (data, body) => {
+const sendMessage = (data) => {
   socket.emit("new-message", {
     message: data.message,
     lastMessage: data.lastMessage,
@@ -110,7 +110,7 @@ export const postMessage = (body) => async (dispatch) => {
       dispatch(setNewMessage(data.message));
     }
 
-    sendMessage(data, body);
+    sendMessage(data);
   } catch (error) {
     console.error(error);
   }
@@ -126,7 +126,8 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 };
 
 export const selectChat = (username, data, conversationId) => async (dispatch) => {
-  socket.emit("switch-room", { room: conversationId });
+  socket.emit("enter-room", { room: conversationId });
+  socket.setRoom(conversationId);
   socket.emit("last-seen", data);
   dispatch(setActiveChat({ username, conversationId }));
 };

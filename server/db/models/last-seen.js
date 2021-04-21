@@ -23,9 +23,16 @@ LastSeen.saveLastSeen = async function({ userId, conversationId, messageId }) {
     }
   });
   if (lastMessage) {
-    return LastSeen.update({
+    await LastSeen.update({
       messageId
     }, {
+      where: {
+        userId,
+        conversationId
+      },
+      returning: true
+    });
+    return await LastSeen.findOne({
       where: {
         userId,
         conversationId

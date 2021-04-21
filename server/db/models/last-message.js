@@ -23,9 +23,16 @@ LastMessage.saveLastMessage = async function({ userId, conversationId, messageId
     }
   });
   if (lastMessage) {
-    return LastMessage.update({
+    await LastMessage.update({
       messageId
     }, {
+      where: {
+        userId,
+        conversationId
+      },
+      returning: true
+    });
+    return await LastMessage.findOne({
       where: {
         userId,
         conversationId

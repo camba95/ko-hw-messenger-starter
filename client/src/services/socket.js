@@ -14,7 +14,6 @@ export const getSocket = () => socket;
 
 export const connect = (token) => {
   const socket = getSocket();
-  socket.removeAllListeners();
   socket.auth = { token };
   socket.connect();
 
@@ -23,7 +22,7 @@ export const connect = (token) => {
 
 export const reconnect = (sessionId, userId) => {
   const socket = getSocket();
-  socket.removeAllListeners();
+  socket.offAny();
   socket.auth = { sessionId };
   socket.userId = userId;
   socket.connect();
@@ -44,6 +43,11 @@ export const emit = (event, payload) => {
   socket.emit(event, payload);
 };
 
+export const setRoom = (room) => {
+  const socket = getSocket();
+  socket.room = room;
+};
+
 const setListeners = (socket) => {
   socket.on("connect", () => {
     console.debug("Connected to server");
@@ -58,11 +62,13 @@ const setListeners = (socket) => {
 
     socket.on("new-message", (data) => {
       store.dispatch(setNewMessage(data.message, data.sender));
-      socket.emit("last-seen", {
-        conversationId: data.lastMessage.conversationId,
-        messageId: data.lastMessage.messageId,
-        otherId: data.lastMessage.userId
-      });
+      if (socket.room === data.lastMessage.conversationId) {
+        socket.emit("last-seen", {
+          conversationId: data.lastMessage.conversationId,
+          messageId: data.lastMessage.messageId,
+          otherId: data.lastMessage.userId
+        });
+      }
     });
 
     socket.on("last-seen", (data) => {

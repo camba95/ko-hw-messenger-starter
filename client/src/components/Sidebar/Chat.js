@@ -56,8 +56,8 @@ class Chat extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectChat: (username, data) => {
-      dispatch(selectChat(username, data));
+    selectChat: (username, data, id) => {
+      dispatch(selectChat(username, data, id));
     },
   };
 };
