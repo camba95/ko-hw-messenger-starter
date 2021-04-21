@@ -15,4 +15,28 @@ const LastMessage = db.define("lastMessage", {
   }
 });
 
+LastMessage.saveLastMessage = async function({ userId, conversationId, messageId }) {
+  const lastMessage = await LastMessage.findOne({
+    where: {
+      userId,
+      conversationId
+    }
+  });
+  if (lastMessage) {
+    return LastMessage.update({
+      messageId
+    }, {
+      where: {
+        userId,
+        conversationId
+      }
+    });
+  }
+  return LastMessage.create({
+    userId,
+    conversationId,
+    messageId
+  });
+};
+
 module.exports = LastMessage;
