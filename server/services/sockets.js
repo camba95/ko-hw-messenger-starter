@@ -2,7 +2,7 @@ const socketIO = require("socket.io");
 const onlineUsers = require("../onlineUsers");
 const { auth } = require("../middlewares/auth-sockets");
 const cache = require("./cache");
-const { LastSeen, LastMessage } = require("../db/models");
+const { LastSeen } = require("../db/models");
 
 const config = (server) => {
   return socketIO(server);
@@ -30,29 +30,18 @@ const setListeners = (io) => {
       });
     });
 
-    socket.on("last-seen", async ({ userId, otherId, conversationId, messageId }) => {
+    socket.on("last-seen", async ({ userId, conversationId, messageId }) => {
       await LastSeen.saveLastSeen({
         userId: userId || socket.userId,
         conversationId,
         messageId
       });
 
-      if (!otherId) return;
-
-      const lastMessage = await LastMessage.findOne({
-        where: {
-          userId: otherId,
-          conversationId
-        }
+      socket.to(conversationId).emit("last-seen", {
+        messageId,
+        userId,
+        conversationId
       });
-
-      if (!lastMessage || lastMessage.messageId === messageId) {
-        socket.to(otherId).emit("last-seen", {
-          messageId,
-          userId,
-          conversationId
-        });
-      }
     });
 
     socket.on("logout", (id) => {
@@ -69,22 +58,16 @@ const setListeners = (io) => {
         onlineUsers.splice(userIndex, 1);
       }
       const data = await cache.get(socket.sessionId);
-      await cache.del(socket.sessionId);
       socket.broadcast.emit("remove-offline-user", data);
     });
 
-    socket.on("switch-room", ({ room }) => {
-      if (socket.room) {
-        socket.leave(socket.room, () => {
-          socket.join(room, () => {
-            socket.room = room;
-          });
-        });
-        return;
+    socket.on("enter-room", async ({ room }) => {
+      const data = await cache.get(`user-room${socket.userId}`);
+      if (data) {
+        socket.leave(data.room);
       }
-      socket.join(room, () => {
-        socket.room = room;
-      });
+      await cache.set(`user-room${socket.userId}`, 'room', room);
+      socket.join(room);
     });
 
     socket.emit("session", {

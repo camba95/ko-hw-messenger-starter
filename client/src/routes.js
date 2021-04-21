@@ -7,7 +7,7 @@ import Login from "./pages/Login";
 import { Home, SnackbarError } from "./components";
 
 const Routes = (props) => {
-  const { user, fetchUser } = props;
+  const { user, fetchUser, connectSocket } = props;
   const [errorMessage, setErrorMessage] = useState("");
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
@@ -30,7 +30,7 @@ const Routes = (props) => {
       connectSocket(user.id);
     }
 
-  }, [user.id, user.error]);
+  }, [user.id, user.error, connectSocket]);
 
   if (props.user.isFetchingUser) {
     return <div>Loading...</div>;
