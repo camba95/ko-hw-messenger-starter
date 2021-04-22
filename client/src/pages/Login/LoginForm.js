@@ -5,12 +5,11 @@ import {
   FormControl,
   TextField,
   Typography,
+  Hidden
 } from "@material-ui/core";
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const LoginForm = (props) => {
   const { login } = props;
-  const smallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -24,7 +23,7 @@ const LoginForm = (props) => {
     <Grid item xs={12}>
       <form onSubmit={handleLogin}>
         <Grid>
-          {renderFormTitle(smallScreen)}
+          {renderFormTitle()}
           <Grid>
             <FormControl
               fullWidth
@@ -71,11 +70,15 @@ const LoginForm = (props) => {
   );
 };
 
-const renderFormTitle = (smallScreen) => {
-  if (smallScreen) {
-    return <Typography align="center" variant="h5">Welcome back!</Typography>;
-  }
-  return <Typography variant="h5">Welcome back!</Typography>;
-};
+const renderFormTitle = () => (
+  <>
+    <Hidden smUp>
+      <Typography align="center" variant="h5">Welcome back!</Typography>
+    </Hidden>
+    <Hidden smDown>
+      <Typography variant="h5">Welcome back!</Typography>
+    </Hidden>
+  </>
+);
 
 export default LoginForm;

@@ -2,7 +2,6 @@ import React from "react";
 import classNames from "classnames";
 import { Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import BubbleIcon from "../BubbleIcon";
 import sideBannerImg from "../../assets/bg-img.png"
@@ -31,10 +30,6 @@ const SideBanner = (props) => {
   const classes = useStyles();
   const { children } = props;
 
-  const smallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
-  if (smallScreen) {
-    return children;
-  }
   return (
     <Grid
       container

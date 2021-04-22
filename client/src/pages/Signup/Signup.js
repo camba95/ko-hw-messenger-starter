@@ -5,10 +5,10 @@ import {
   Grid,
   Typography,
   Box,
-  Button
+  Button,
+  Hidden
 } from "@material-ui/core";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import SignupForm from "./SignupForm";
 import SideBanner from "../../components/SideBanner";
@@ -39,44 +39,68 @@ const Signup = (props) => {
   const { user, register } = props;
   const history = useHistory();
   const classes = useStyles();
-  const smallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
   if (user.id) {
     return <Redirect to="/home" />;
   }
 
-  return (
-    <SideBanner>
-      <Box className={classes.root}>
-        <Grid container justify="flex-end" alignItems="center">
-          {!smallScreen && (
-            <Box m={2}>
-              <Typography>Already have an account?</Typography>
-            </Box>
-          )}
+  const form = (
+    <Box className={classes.root}>
+      <Grid container justify="flex-end" alignItems="center">
+        <Hidden smDown>
           <Box m={2}>
-            {renderLoginButton(smallScreen, history)}
+            <Typography>Already have an account?</Typography>
           </Box>
-        </Grid>
-        <Box className={classes.formContainer}>
-          <Grid container>
-            <SignupForm register={register} />
-          </Grid>
+        </Hidden>
+        <Box m={2}>
+          {renderLoginButton(history)}
         </Box>
+      </Grid>
+      <Box className={classes.formContainer}>
+        <Grid container>
+          <SignupForm register={register} />
+        </Grid>
       </Box>
-    </SideBanner>
+    </Box>
+  );
+
+  return (
+    <>
+      <Hidden smDown>
+        <SideBanner >
+          {form}
+        </SideBanner>
+      </Hidden>
+      <Hidden smUp>
+        {form}
+      </Hidden>
+    </>
   );
 };
 
-const renderLoginButton = (smallScreen, history) => (
-  <Button
-    size={smallScreen ? "medium" : "large"}
-    color="secondary"
-    variant={smallScreen ? "outlined" : "contained"}
-    onClick={() => history.push("/login")}
-  >
-    Login
-  </Button>
+const renderLoginButton = (history) => (
+  <>
+    <Hidden smUp>
+      <Button
+        size="medium"
+        color="secondary"
+        variant="outlined"
+        onClick={() => history.push("/login")}
+      >
+        Login
+      </Button>
+    </Hidden>
+    <Hidden smDown>
+      <Button
+        size="large"
+        color="secondary"
+        variant="contained"
+        onClick={() => history.push("/login")}
+      >
+        Login
+      </Button>
+    </Hidden>
+  </>
 );
 
 const mapStateToProps = (state) => {

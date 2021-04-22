@@ -6,9 +6,9 @@ import {
   Grid,
   Box,
   Typography,
-  Button
+  Button,
+  Hidden
 } from "@material-ui/core";
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import LoginForm from "./LoginForm";
 import SideBanner from "../../components/SideBanner";
@@ -40,51 +40,74 @@ const useStyles = makeStyles((theme) => createStyles({
 const Login = (props) => {
   const classes = useStyles();
   const history = useHistory();
-  const smallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
   const { user, login } = props;
 
   if (user.id) {
     return <Redirect to="/home" />;
   }
+  const form = (
+    <Box className={classes.root}>
+      <Grid container justify="flex-end" alignItems="center">
+        <Hidden smDown>
+          <Box m={2}>
+            <Typography>Don't have an account?</Typography>
+          </Box>
+        </Hidden>
+        <Box m={2}>
+          {renderCreateAccountButton(history)}
+        </Box>
+      </Grid>
+      <Box className={classes.formContainer}>
+        <Grid container>
+          <Hidden smUp>
+            <Box mx="auto" mb={2}>
+              <BubbleIcon fill="#3A8DFF" />
+            </Box>
+          </Hidden>
+          <LoginForm login={login} />
+        </Grid>
+      </Box>
+    </Box>
+  );
 
   return (
-    <SideBanner>
-      <Box className={classes.root}>
-        <Grid container justify="flex-end" alignItems="center">
-          {!smallScreen && (
-            <Box m={2}>
-              <Typography>Don't have an account?</Typography>
-            </Box>
-          )}
-          <Box m={2}>
-            {renderCreateAccountButton(smallScreen, history)}
-          </Box>
-        </Grid>
-        <Box className={classes.formContainer}>
-          <Grid container>
-            {smallScreen && (
-              <Box mx="auto" mb={2}>
-                <BubbleIcon fill="#3A8DFF" />
-              </Box>
-            )}
-            <LoginForm login={login} />
-          </Grid>
-        </Box>
-      </Box>
-    </SideBanner>
+    <>
+      <Hidden smDown>
+        <SideBanner >
+          {form}
+        </SideBanner>
+      </Hidden>
+      <Hidden smUp>
+        {form}
+      </Hidden>
+    </>
   );
 };
 
-const renderCreateAccountButton = (smallScreen, history) => (
-  <Button
-    size={smallScreen ? "medium" : "large"}
-    color="secondary"
-    variant={smallScreen ? "outlined" : "contained"}
-    onClick={() => history.push("/register")}
-  >
-    Create account
-  </Button>
+const renderCreateAccountButton = (history) => (
+  <>
+    <Hidden smUp>
+      <Button
+        size="medium"
+        color="secondary"
+        variant="outlined"
+        onClick={() => history.push("/register")}
+      >
+        Create account
+      </Button>
+    </Hidden>
+    <Hidden smDown>
+      <Button
+        size="large"
+        color="secondary"
+        variant="contained"
+        onClick={() => history.push("/register")}
+      >
+        Create account
+      </Button>
+    </Hidden>
+  </>
 );
 
 const mapStateToProps = (state) => {
