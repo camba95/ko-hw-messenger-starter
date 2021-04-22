@@ -6,12 +6,13 @@ import {
   Grid,
   Box,
   Typography,
-  Hidden
+  Hidden,
+  Button
 } from "@material-ui/core";
 
 import LoginForm from "./LoginForm";
 import SideBanner from "../../components/SideBanner";
-import RedirectButton from "../../components/Login/RedirectButton";
+import ConditionalElement from "../../components/ConditionalElement";
 import { login } from "../../store/utils/thunkCreators";
 
 import BubbleIcon from "../../components/BubbleIcon";
@@ -37,15 +38,47 @@ const useStyles = makeStyles((theme) => createStyles({
   }
 }));
 
+const generateButtons = (history) => ([
+  {
+    notIn: ["md", "lg", "xl"],
+    render: () => (
+      <Button
+        size="medium"
+        color="secondary"
+        variant="outlined"
+        onClick={() => history.push("/register")}
+      >
+        Create account
+      </Button>
+    )
+  },
+  {
+    notIn: ["xs", "sm"],
+    render: () => (
+      <Button
+        size="large"
+        color="secondary"
+        variant="contained"
+        onClick={() => history.push("/register")}
+      >
+        Create account
+      </Button>
+    )
+  },
+]);
+
 const Login = (props) => {
   const classes = useStyles();
   const history = useHistory();
+
+  const signupButtons = generateButtons(history);
 
   const { user, login } = props;
 
   if (user.id) {
     return <Redirect to="/home" />;
   }
+
   const form = (
     <Box className={classes.root}>
       <Grid container justify="flex-end" alignItems="center">
@@ -55,9 +88,7 @@ const Login = (props) => {
           </Box>
         </Hidden>
         <Box m={2}>
-          <RedirectButton onClick={() => history.push("/register")}>
-            Create account
-          </RedirectButton>
+          <ConditionalElement elements={signupButtons} />
         </Box>
       </Grid>
       <Box className={classes.formContainer}>

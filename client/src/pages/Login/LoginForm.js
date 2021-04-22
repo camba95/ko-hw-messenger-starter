@@ -5,11 +5,23 @@ import {
   FormControl,
   TextField,
   Typography,
-  Hidden
 } from "@material-ui/core";
+import ConditionalElement from "../../components/ConditionalElement";
+
+const generateTitles = () => ([
+  {
+    notIn: ["md", "lg", "xl"],
+    render: () => <Typography align="center" variant="h5">Welcome back!</Typography>
+  },
+  {
+    notIn: ["xs", "sm"],
+    render: () => <Typography variant="h5">Welcome back!</Typography>
+  },
+]);
 
 const LoginForm = (props) => {
   const { login } = props;
+  const titles = generateTitles();
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -23,7 +35,7 @@ const LoginForm = (props) => {
     <Grid item xs={12}>
       <form onSubmit={handleLogin}>
         <Grid>
-          {renderFormTitle()}
+          <ConditionalElement elements={titles} />
           <Grid>
             <FormControl
               fullWidth
@@ -62,23 +74,12 @@ const LoginForm = (props) => {
               size="large"
             >
               Login
-              </Button>
+            </Button>
           </Grid>
         </Grid>
       </form>
     </Grid>
   );
 };
-
-const renderFormTitle = () => (
-  <>
-    <Hidden smUp>
-      <Typography align="center" variant="h5">Welcome back!</Typography>
-    </Hidden>
-    <Hidden smDown>
-      <Typography variant="h5">Welcome back!</Typography>
-    </Hidden>
-  </>
-);
 
 export default LoginForm;

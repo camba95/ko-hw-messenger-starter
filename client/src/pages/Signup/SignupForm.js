@@ -114,7 +114,7 @@ const SingupForm = (props) => {
               color="primary"
             >
               Create
-                </Button>
+            </Button>
           </Grid>
         </Grid>
       </form>
