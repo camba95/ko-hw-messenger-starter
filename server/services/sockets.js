@@ -37,7 +37,7 @@ const setListeners = (io) => {
         messageId
       });
 
-      await Message.setReadStatus(userId, messageId);
+      if (messageId) await Message.setReadStatus(userId, messageId);
 
       socket.to(conversationId).emit("last-seen", {
         messageId,

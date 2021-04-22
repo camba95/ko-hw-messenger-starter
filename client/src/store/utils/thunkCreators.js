@@ -4,6 +4,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  clearUnreadMessages
 } from "../conversations";
 import { setActiveChat } from "../activeConversation";
 import { gotUser, setFetchingStatus } from "../user";
@@ -129,6 +130,7 @@ export const selectChat = (username, data, conversationId) => async (dispatch) =
   socket.emit("enter-room", { room: conversationId });
   socket.setRoom(conversationId);
   socket.emit("last-seen", data);
+  dispatch(clearUnreadMessages(conversationId));
   dispatch(setActiveChat({ username, conversationId }));
 };
 

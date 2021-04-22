@@ -111,10 +111,16 @@ async function seed() {
     });
   }
 
-  await Message.create({
+  const lastHualingMessage = await Message.create({
     conversationId: hualingConvo.id,
     senderId: hualing.id,
     text: "😂 😂 😂",
+  });
+
+  await LastMessage.create({
+    conversationId: hualingConvo.id,
+    userId: hualing.id,
+    messageId: lastHualingMessage.id
   });
 
   const otherUsers = await Promise.all([
