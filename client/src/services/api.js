@@ -44,5 +44,5 @@ export const searchUsers = async (searchTerm) => {
 
 export const authSocket = async () => {
   const headers = getHeaders();
-  return axios.post('/api/sockets', {}, { headers });
+  return axios.get("/api/sockets", { headers });
 };
