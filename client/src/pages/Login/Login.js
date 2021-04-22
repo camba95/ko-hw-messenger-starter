@@ -76,30 +76,16 @@ const Login = (props) => {
   );
 };
 
-const renderCreateAccountButton = (smallScreen, history) => {
-  if (smallScreen) {
-    return (
-      <Button
-        size="large"
-        color="secondary"
-        variant="outlined"
-        onClick={() => history.push("/register")}
-      >
-        Create account
-      </Button>
-    );
-  }
-  return (
-    <Button
-      size="large"
-      color="secondary"
-      variant="contained"
-      onClick={() => history.push("/register")}
-    >
-      Create account
-    </Button>
-  );
-};
+const renderCreateAccountButton = (smallScreen, history) => (
+  <Button
+    size="large"
+    color="secondary"
+    variant={smallScreen ? "outlined" : "contained"}
+    onClick={() => history.push("/register")}
+  >
+    Create account
+  </Button>
+);
 
 const mapStateToProps = (state) => {
   return {

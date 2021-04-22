@@ -7,14 +7,39 @@ import {
   Box,
   Button
 } from "@material-ui/core";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import SignupForm from "./SignupForm";
 import SideBanner from "../../components/SideBanner";
 import { register } from "../../store/utils/thunkCreators";
 
+const useStyles = makeStyles((theme) => createStyles({
+  root: {
+    display: "flex",
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    height: "100%"
+  },
+  formContainer: {
+    display: "flex",
+    flex: 1,
+    width: "60%",
+    margin: "0 auto",
+    marginTop: "10rem",
+    [theme.breakpoints.down('sm')]: {
+      marginTop: "2rem",
+    },
+  }
+}));
+
 const Signup = (props) => {
   const { user, register } = props;
   const history = useHistory();
+  const classes = useStyles();
+  const smallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
   if (user.id) {
     return <Redirect to="/home" />;
@@ -22,33 +47,37 @@ const Signup = (props) => {
 
   return (
     <SideBanner>
-      <Grid container direction="column" justify="flex-start" alignItems="stretch">
-        <Grid container item justify="flex-end" alignItems="center">
+      <Box className={classes.root}>
+        <Grid container justify="flex-end" alignItems="center">
+          {!smallScreen && (
+            <Box m={2}>
+              <Typography>Already have an account?</Typography>
+            </Box>
+          )}
           <Box m={2}>
-            <Typography>Already have an account?</Typography>
-          </Box>
-          <Box m={2}>
-            <Button
-              size="large"
-              color="secondary"
-              variant="contained"
-              onClick={() => history.push("/login")}
-            >
-              Login
-            </Button>
+            {renderLoginButton(smallScreen, history)}
           </Box>
         </Grid>
-        <Box height="100%" display="flex" flex="1">
-          <Grid container item justify="center" alignItems="center">
-            <Box width="60%">
-              <SignupForm register={register} />
-            </Box>
+        <Box className={classes.formContainer}>
+          <Grid container>
+            <SignupForm register={register} />
           </Grid>
         </Box>
-      </Grid>
+      </Box>
     </SideBanner>
   );
 };
+
+const renderLoginButton = (smallScreen, history) => (
+  <Button
+    size="large"
+    color="secondary"
+    variant={smallScreen ? "outlined" : "contained"}
+    onClick={() => history.push("/login")}
+  >
+    Login
+  </Button>
+);
 
 const mapStateToProps = (state) => {
   return {
