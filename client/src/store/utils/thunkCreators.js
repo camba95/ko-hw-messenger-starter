@@ -4,6 +4,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  clearUnreadMessages
 } from "../conversations";
 import { setActiveChat } from "../activeConversation";
 import { gotUser, setFetchingStatus } from "../user";
@@ -104,10 +105,10 @@ export const postMessage = (body) => async (dispatch) => {
   try {
     const data = await saveMessage(body);
 
-    if (!body.conversationId) {
-      dispatch(addConversation(body.recipientId, data.message));
+    if (body.conversationId) {
+      dispatch(setNewMessage(data.message, null, body.conversationId));
     } else {
-      dispatch(setNewMessage(data.message));
+      dispatch(addConversation(body.recipientId, data.message));
     }
 
     sendMessage(data);
@@ -129,6 +130,7 @@ export const selectChat = (username, data, conversationId) => async (dispatch) =
   socket.emit("enter-room", { room: conversationId });
   socket.setRoom(conversationId);
   socket.emit("last-seen", data);
+  dispatch(clearUnreadMessages(conversationId));
   dispatch(setActiveChat({ username, conversationId }));
 };
 

@@ -2,7 +2,7 @@ const socketIO = require("socket.io");
 const onlineUsers = require("../onlineUsers");
 const { auth } = require("../middlewares/auth-sockets");
 const cache = require("./cache");
-const { LastSeen } = require("../db/models");
+const { LastSeen, Message, Conversation } = require("../db/models");
 
 const config = (server) => {
   return socketIO(server);
@@ -21,9 +21,25 @@ const setListeners = (io) => {
       socket.broadcast.emit("add-online-user", id);
     });
 
-    socket.on("new-message", ({ message, sender, lastMessage }) => {
+    socket.on("new-message", async ({ message, sender, lastMessage }) => {
       const { conversationId } = lastMessage;
-      socket.to(conversationId).emit("new-message", {
+
+      const conversation = await Conversation.findByPk(conversationId);
+
+      const otherUserId = lastMessage.userId === conversation.user1Id ? conversation.user2Id : conversation.user1Id;
+
+      const data = await cache.get(`user-room-${otherUserId}`);
+
+      if (data && data.room === `${conversationId}`) {
+        socket.to(conversationId).emit("new-message", {
+          message,
+          sender,
+          lastMessage
+        });
+        return;
+      }
+
+      socket.broadcast.emit(`messages-for-${otherUserId}`, {
         message,
         sender,
         lastMessage
@@ -36,6 +52,8 @@ const setListeners = (io) => {
         conversationId,
         messageId
       });
+
+      if (messageId) await Message.setReadStatus(userId, messageId);
 
       socket.to(conversationId).emit("last-seen", {
         messageId,
@@ -62,11 +80,11 @@ const setListeners = (io) => {
     });
 
     socket.on("enter-room", async ({ room }) => {
-      const data = await cache.get(`user-room${socket.userId}`);
+      const data = await cache.get(`user-room-${socket.userId}`);
       if (data) {
         socket.leave(data.room);
       }
-      await cache.set(`user-room${socket.userId}`, 'room', room);
+      await cache.set(`user-room-${socket.userId}`, 'room', room);
       socket.join(room);
     });
 
