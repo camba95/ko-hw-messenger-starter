@@ -14,10 +14,10 @@ const LoginForm = (props) => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    const username = event.target.username.value;
+    const email = event.target.email.value;
     const password = event.target.password.value;
 
-    await login({ username, password });
+    await login({ email, password });
   };
 
   return (
@@ -32,9 +32,9 @@ const LoginForm = (props) => {
               required
             >
               <TextField
-                aria-label="username"
+                aria-label="email"
                 label="E-mail address"
-                name="username"
+                name="email"
                 type="text"
               />
             </FormControl>
