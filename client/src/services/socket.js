@@ -35,7 +35,7 @@ export const disconnect = () => {
   const socket = getSocket();
   socket.auth = null;
   socket.userId = null;
-  socket.removeAllListeners();
+  socket.offAny();
   socket.disconnect();
 };
 
@@ -76,10 +76,21 @@ const setListeners = (socket) => {
       store.dispatch(setLastSeen(data));
     });
 
+    socket.on("last-seen", (data) => {
+      store.dispatch(setLastSeen(data));
+    });
+
     socket.on("session", ({ sessionId, userId }) => {
       socket.auth = { sessionId };
       socket.userId = userId;
       localStorage.setItem(SOCKET_SESSION, sessionId);
+      setOtherListeners(socket)
     });
+  });
+};
+
+const setOtherListeners = (socket) => {
+  socket.on(`messages-for-${socket.userId}`, (data) => {
+    store.dispatch(setNewMessage(data.message, data.sender, socket.room));
   });
 };
