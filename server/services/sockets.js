@@ -2,7 +2,7 @@ const socketIO = require("socket.io");
 const onlineUsers = require("../onlineUsers");
 const { auth } = require("../middlewares/auth-sockets");
 const cache = require("./cache");
-const { LastSeen } = require("../db/models");
+const { LastSeen, Message } = require("../db/models");
 
 const config = (server) => {
   return socketIO(server);
@@ -36,6 +36,8 @@ const setListeners = (io) => {
         conversationId,
         messageId
       });
+
+      await Message.setReadStatus(userId, messageId);
 
       socket.to(conversationId).emit("last-seen", {
         messageId,

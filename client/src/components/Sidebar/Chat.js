@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Box } from "@material-ui/core";
+import { Box, Chip } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
 import { selectChat } from "../../store/utils/thunkCreators";
@@ -35,11 +35,11 @@ class Chat extends Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const otherUser = this.props.conversation.otherUser;
+    const { classes, conversation } = this.props;
+    const otherUser = conversation.otherUser;
     return (
       <Box
-        onClick={() => this.handleClick(this.props.conversation)}
+        onClick={() => this.handleClick(conversation)}
         className={classes.root}
       >
         <BadgeAvatar
@@ -48,7 +48,12 @@ class Chat extends Component {
           online={otherUser.online}
           sidebar={true}
         />
-        <ChatContent conversation={this.props.conversation} />
+        <ChatContent conversation={conversation} />
+        {!!conversation.unreadMessages && (
+          <Box mr={1}>
+            <Chip color="primary" size="small" label={conversation.unreadMessages} />
+          </Box>
+        )}
       </Box>
     );
   }

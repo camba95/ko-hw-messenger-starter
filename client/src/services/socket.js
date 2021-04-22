@@ -14,6 +14,7 @@ export const getSocket = () => socket;
 
 export const connect = (token) => {
   const socket = getSocket();
+  socket.offAny();
   socket.auth = { token };
   socket.connect();
 
