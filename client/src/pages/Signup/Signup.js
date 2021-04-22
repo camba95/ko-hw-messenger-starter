@@ -70,7 +70,7 @@ const Signup = (props) => {
 
 const renderLoginButton = (smallScreen, history) => (
   <Button
-    size="large"
+    size={smallScreen ? "medium" : "large"}
     color="secondary"
     variant={smallScreen ? "outlined" : "contained"}
     onClick={() => history.push("/login")}

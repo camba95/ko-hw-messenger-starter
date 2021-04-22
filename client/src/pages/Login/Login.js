@@ -78,7 +78,7 @@ const Login = (props) => {
 
 const renderCreateAccountButton = (smallScreen, history) => (
   <Button
-    size="large"
+    size={smallScreen ? "medium" : "large"}
     color="secondary"
     variant={smallScreen ? "outlined" : "contained"}
     onClick={() => history.push("/register")}
