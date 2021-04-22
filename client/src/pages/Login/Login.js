@@ -6,12 +6,12 @@ import {
   Grid,
   Box,
   Typography,
-  Button,
   Hidden
 } from "@material-ui/core";
 
 import LoginForm from "./LoginForm";
 import SideBanner from "../../components/SideBanner";
+import RedirectButton from "../../components/Login/RedirectButton";
 import { login } from "../../store/utils/thunkCreators";
 
 import BubbleIcon from "../../components/BubbleIcon";
@@ -55,7 +55,9 @@ const Login = (props) => {
           </Box>
         </Hidden>
         <Box m={2}>
-          {renderCreateAccountButton(history)}
+          <RedirectButton onClick={() => history.push("/register")}>
+            Create account
+          </RedirectButton>
         </Box>
       </Grid>
       <Box className={classes.formContainer}>
@@ -84,31 +86,6 @@ const Login = (props) => {
     </>
   );
 };
-
-const renderCreateAccountButton = (history) => (
-  <>
-    <Hidden smUp>
-      <Button
-        size="medium"
-        color="secondary"
-        variant="outlined"
-        onClick={() => history.push("/register")}
-      >
-        Create account
-      </Button>
-    </Hidden>
-    <Hidden smDown>
-      <Button
-        size="large"
-        color="secondary"
-        variant="contained"
-        onClick={() => history.push("/register")}
-      >
-        Create account
-      </Button>
-    </Hidden>
-  </>
-);
 
 const mapStateToProps = (state) => {
   return {
