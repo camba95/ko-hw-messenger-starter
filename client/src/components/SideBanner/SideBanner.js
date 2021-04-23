@@ -3,8 +3,7 @@ import classNames from "classnames";
 import { Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { ReactComponent as BubbleIcon } from "../../assets/bubble.svg";
-
+import BubbleIcon from "../BubbleIcon";
 import sideBannerImg from "../../assets/bg-img.png"
 
 const useStyles = makeStyles({
@@ -30,6 +29,7 @@ const useStyles = makeStyles({
 const SideBanner = (props) => {
   const classes = useStyles();
   const { children } = props;
+
   return (
     <Grid
       container

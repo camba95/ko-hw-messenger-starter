@@ -46,14 +46,12 @@ router.post("/register", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   try {
     // expects username and password in req.body
-    const { username, password } = req.body;
-    if (!username || !password)
+    const { email, password } = req.body;
+    if (!email || !password)
       return res.status(400).json({ error: "Username and password required" });
 
     const user = await User.findOne({
-      where: {
-        username: req.body.username,
-      },
+      where: { email },
     });
 
     if (!user) {
