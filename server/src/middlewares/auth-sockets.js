@@ -25,26 +25,26 @@ const auth = () => {
 
       const data = await cache.get(token);
 
-      if (data && data.id) {
-        const user = await User.findByPk(data.id);
-
-        if (!user) {
-          console.debug('User not found');
-          return next(new Error("Unathorized connection"));
-        }
-
-        await cache.del(token);
-
-        const sessionId = uuid();
-        await cache.set(sessionId, "id", data.id);
-
-        socket.sessionId = sessionId;
-        socket.userId = user.id;
-        return next();
+      if (!data || !data.id) {
+        console.debug('Token not found');
+        return next(new Error("Unathorized connection"));
       }
 
-      console.debug('Token not found');
-      next(new Error("Unathorized connection"));
+      const user = await User.findByPk(data.id);
+
+      if (!user) {
+        console.debug('User not found');
+        return next(new Error("Unathorized connection"));
+      }
+
+      await cache.del(token);
+
+      const newSessionId = uuid();
+      await cache.set(newSessionId, "id", data.id);
+
+      socket.sessionId = newSessionId;
+      socket.userId = user.id;
+      return next();
     } catch (error) {
       console.error(error);
       next(new Error("Unathorized connection"));
