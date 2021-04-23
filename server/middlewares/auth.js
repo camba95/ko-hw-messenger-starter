@@ -12,26 +12,17 @@ const auth = () => {
     try {
       const authCookie = req.cookies[COOKIE_NAME];
 
-      if (!authCookie) {
-        console.debug('No auth cookie');
-        return res.status(401).send();
-      }
+      if (!authCookie) throw new Error("No auth cookie");
 
       const decoded = verifyToken(authCookie);
 
-      if (!decoded) {
-        console.debug('Invalid token');
-        return res.status(401).send();
-      }
+      if (!decoded) throw new Error("Invalid token");
 
       const user = await User.findOne({
         where: { id: decoded.id },
       });
 
-      if (!user) {
-        console.debug('No user found');
-        return res.status(401).send();
-      }
+      if (!user) throw new Error("User not found");
 
       const authHeader = req.header(CSRF_HEADER);
       verifyCsrfToken(decoded.csrfToken, authHeader);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
-import { fetchUser } from "./store/utils/thunkCreators";
+import { fetchUser, connectSocket } from "./store/utils/thunkCreators";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import { Home, SnackbarError } from "./components";
@@ -24,8 +24,13 @@ const Routes = (props) => {
         setErrorMessage("Internal Server Error. Please try again");
       }
       setSnackBarOpen(true);
+      return;
     }
-  }, [user.error]);
+    if (user.id) {
+      connectSocket(user.id);
+    }
+
+  }, [user.id, user.error]);
 
   if (props.user.isFetchingUser) {
     return <div>Loading...</div>;
@@ -64,6 +69,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchUser() {
       dispatch(fetchUser());
+    },
+    connectSocket(id) {
+      dispatch(connectSocket(id));
     },
   };
 };

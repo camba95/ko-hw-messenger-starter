@@ -22,7 +22,7 @@ const useStyles = makeStyles({
     backgroundImage: `linear-gradient(to bottom, rgba(58, 141, 255, 0.85), rgba(134, 185, 255, 0.85)), url(${sideBannerImg})`,
   },
   sideBannerBubble: {
-    margin: '20px',
+    margin: "20px",
   }
 });
 
