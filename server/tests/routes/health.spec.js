@@ -1,21 +1,12 @@
-const chai = require("chai");
-const chaiHttp = require("chai-http");
-const { app } = require("../../app.js");
-
-chai.should();
-chai.use(chaiHttp);
+const request = require("supertest");
+const { app } = require("../../app");
 
 describe("/POST ping", () => {
-  it("it should return 200", done => {
-    chai
-      .request(app)
-      .get("/health/ping")
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.body.should.have
-          .property("success")
-          .eql(true);
-        done();
-      });
+  test("it should return 200", async () => {
+    const response = await request(app)
+      .get("/health/ping");
+
+    expect(response.status).toEqual(200);
+    expect(response.body).toEqual({ success: true });
   });
 });
