@@ -1,7 +1,7 @@
 const request = require("supertest");
 const { app } = require("../../app");
 
-describe("/POST ping", () => {
+describe("/GET ping", () => {
   test("it should return 200", async () => {
     const response = await request(app)
       .get("/health/ping");
