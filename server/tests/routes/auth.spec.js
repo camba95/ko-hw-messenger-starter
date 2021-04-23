@@ -1,29 +1,15 @@
 const request = require("supertest");
 const { app } = require("../../src/app");
 
-jest.mock("../../src/db/models", () => ({
-  User: {
-    create: jest.fn((data) => ({
-      ...data,
-      dataValues: { ...data }
-    }))
-  }
-}));
-
-jest.mock("../../src/utils/token", () => ({
-  generateToken: jest.fn(() => ({ csrfToken: "token" }))
-}));
-
-jest.mock("../../src/utils/cookies", () => ({
-  getCookieSettings: jest.fn(() => ({}))
-}));
-
-jest.mock("../../src/services/cache", () => ({
-  set: jest.fn(),
-  expire: jest.fn(),
-}));
+jest.mock("../../src/db/models");
+jest.mock("../../src/utils/token");
+jest.mock("../../src/utils/cookies");
+jest.mock("../../src/services/cache");
 
 describe("/POST register", () => {
+
+  beforeEach(() => jest.clearAllMocks());
+
   test("it should return 200", async () => {
     const data = {
       username: 'camba95',
