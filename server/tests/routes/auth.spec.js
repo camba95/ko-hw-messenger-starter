@@ -1,7 +1,7 @@
 const request = require("supertest");
-const { app } = require("../../app");
+const { app } = require("../../src/app");
 
-jest.mock("../../db/models", () => ({
+jest.mock("../../src/db/models", () => ({
   User: {
     create: jest.fn((data) => ({
       ...data,
@@ -10,15 +10,15 @@ jest.mock("../../db/models", () => ({
   }
 }));
 
-jest.mock("../../utils/token", () => ({
+jest.mock("../../src/utils/token", () => ({
   generateToken: jest.fn(() => ({ csrfToken: "token" }))
 }));
 
-jest.mock("../../utils/cookies", () => ({
+jest.mock("../../src/utils/cookies", () => ({
   getCookieSettings: jest.fn(() => ({}))
 }));
 
-jest.mock("../../services/cache", () => ({
+jest.mock("../../src/services/cache", () => ({
   set: jest.fn(),
   expire: jest.fn(),
 }));

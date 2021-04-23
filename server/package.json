@@ -7,7 +7,7 @@
     "debug": "nodemon  --inspect ./bin/www",
     "test": "jest --silent",
     "test:watch": "jest --silent --watchAll",
-    "seed": "node db/seed.js"
+    "seed": "node src/db/seed.js"
   },
   "dependencies": {
     "connect-session-sequelize": "^7.0.4",
