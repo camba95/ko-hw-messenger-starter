@@ -1,3 +1,4 @@
 module.exports = {
-  generateToken: jest.fn(() => ({ csrfToken: "token" }))
+  generateToken: jest.fn(() => ({ csrfToken: "token" })),
+  verifyToken: jest.fn(() => ({}))
 };
