@@ -19,6 +19,10 @@ export const theme = createMuiTheme({
     MuiButton: {
       containedSecondary: {
         color: "#3A8DFF"
+      },
+      outlinedSecondary: {
+        color: "#3A8DFF",
+        borderColor: "#3A8DFF",
       }
     }
   },

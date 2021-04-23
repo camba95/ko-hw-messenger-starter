@@ -1,4 +1,4 @@
-const { v4: uuid } = require('uuid');
+const { v4: uuid } = require("uuid");
 const { User } = require("../db/models");
 const cache = require("../services/cache");
 
@@ -18,10 +18,7 @@ const auth = () => {
 
       const token = socket.handshake.auth.token;
 
-      if (!token) {
-        console.debug('Token not provided');
-        return next(new Error("Unathorized connection"));
-      }
+      if (!token) throw new Error("Token not provided");
 
       const data = await cache.get(token);
 
@@ -30,10 +27,7 @@ const auth = () => {
           where: { id: data.id },
         });
 
-        if (!user) {
-          console.debug('User not found');
-          return next(new Error("Unathorized connection"));
-        }
+        if (!user) throw new Error("User not found");
 
         await cache.del(token);
 
@@ -45,8 +39,7 @@ const auth = () => {
         return next();
       }
 
-      console.debug('Token not found');
-      next(new Error("Unathorized connection"));
+      throw new Error("Token not found");
     } catch (error) {
       console.error(error);
       next(new Error("Unathorized connection"));

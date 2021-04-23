@@ -7,13 +7,11 @@ import {
   addOnlineUser,
   setLastSeen
 } from "../store/conversations";
+import { connectSocket } from "../store/utils/thunkCreators";
 
 const socket = io(window.location.origin, { autoConnect: false });
 
-export const getSocket = () => socket;
-
 export const connect = (token) => {
-  const socket = getSocket();
   socket.offAny();
   socket.auth = { token };
   socket.connect();
@@ -22,7 +20,6 @@ export const connect = (token) => {
 };
 
 export const reconnect = (sessionId, userId) => {
-  const socket = getSocket();
   socket.offAny();
   socket.auth = { sessionId };
   socket.userId = userId;
@@ -32,26 +29,28 @@ export const reconnect = (sessionId, userId) => {
 };
 
 export const disconnect = () => {
-  const socket = getSocket();
+  socket.offAny();
   socket.auth = null;
   socket.userId = null;
-  socket.offAny();
+
   socket.disconnect();
 };
 
 export const emit = (event, payload) => {
-  const socket = getSocket();
   socket.emit(event, payload);
 };
 
 export const setRoom = (room) => {
-  const socket = getSocket();
   socket.room = room;
 };
 
 const setListeners = (socket) => {
   socket.on("connect", () => {
     console.debug("Connected to server");
+
+    if (socket.auth.sessionId) {
+      return store.dispatch(connectSocket());
+    }
 
     socket.on("add-online-user", (data) => {
       store.dispatch(addOnlineUser(data));
@@ -76,15 +75,19 @@ const setListeners = (socket) => {
       store.dispatch(setLastSeen(data));
     });
 
-    socket.on("last-seen", (data) => {
-      store.dispatch(setLastSeen(data));
-    });
-
     socket.on("session", ({ sessionId, userId }) => {
       socket.auth = { sessionId };
       socket.userId = userId;
       localStorage.setItem(SOCKET_SESSION, sessionId);
       setOtherListeners(socket)
+    });
+
+    socket.on("disconnect", (err) => {
+      localStorage.removeItem(SOCKET_SESSION);
+    });
+
+    socket.on("connect_error", (err) => {
+      localStorage.removeItem(SOCKET_SESSION);
     });
   });
 };

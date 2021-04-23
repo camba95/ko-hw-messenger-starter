@@ -51,7 +51,7 @@ const Routes = (props) => {
         <Route
           exact
           path="/"
-          render={(props) => (props.user?.id ? <Home /> : <Signup />)}
+          render={(props) => (props.user?.id ? <Home /> : <Login />)}
         />
         <Route path="/home" component={Home} />
       </Switch>
