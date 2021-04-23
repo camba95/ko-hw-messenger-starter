@@ -1,4 +1,4 @@
-const { v4: uuid } = require('uuid');
+const { v4: uuid } = require("uuid");
 const { User } = require("../db/models");
 const cache = require("../services/cache");
 
@@ -19,21 +19,21 @@ const auth = () => {
       const token = socket.handshake.auth.token;
 
       if (!token) {
-        console.debug('Token not provided');
+        console.debug("Token not provided");
         return next(new Error("Unathorized connection"));
       }
 
       const data = await cache.get(token);
 
       if (!data || !data.id) {
-        console.debug('Token not found');
+        console.debug("Token not found");
         return next(new Error("Unathorized connection"));
       }
 
       const user = await User.findByPk(data.id);
 
       if (!user) {
-        console.debug('User not found');
+        console.debug("User not found");
         return next(new Error("Unathorized connection"));
       }
 

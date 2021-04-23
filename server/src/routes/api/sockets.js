@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const cache = require("../../services/cache");
-const { v4: uuid } = require('uuid');
+const { v4: uuid } = require("uuid");
 
 router.post("/", async (req, res, next) => {
   try {

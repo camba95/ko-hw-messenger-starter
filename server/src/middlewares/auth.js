@@ -5,7 +5,7 @@ const { User } = require("../db/models");
 const verifyCsrfToken = (csrfCookie, csrfHeader) => {
   if (!csrfCookie || !csrfHeader) throw new Error("CSRF token invalid.");
   if (csrfCookie !== csrfHeader) throw new Error("CSRF token invalid.");
-}
+};
 
 const auth = () => {
   return async (req, res, next) => {
@@ -13,21 +13,21 @@ const auth = () => {
       const authCookie = req.cookies[COOKIE_NAME];
 
       if (!authCookie) {
-        console.debug('No auth cookie');
+        console.debug("No auth cookie");
         return res.status(401).send();
       }
 
       const decoded = verifyToken(authCookie);
 
       if (!decoded) {
-        console.debug('Invalid token');
+        console.debug("Invalid token");
         return res.status(401).send();
       }
 
       const user = await User.findByPk(decoded.id);
 
       if (!user) {
-        console.debug('User not found');
+        console.debug("User not found");
         return res.status(401).send();
       }
 

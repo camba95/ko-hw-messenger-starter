@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { v4: uuid } = require('uuid');
+const { v4: uuid } = require("uuid");
 
 const generateToken = (payload) => {
   const csrfToken = uuid();

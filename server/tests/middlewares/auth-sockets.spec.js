@@ -86,7 +86,7 @@ describe("auth middleware", () => {
       };
       const nextMock = jest.fn();
 
-      cache.get.mockImplementation(() => user)
+      cache.get.mockImplementation(() => user);
       User.findByPk.mockImplementation(() => null);
 
       const middleware = auth();

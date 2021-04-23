@@ -33,7 +33,7 @@ Message.setReadStatus = async (userId, messageId) => {
         [Op.not]: userId
       }
     }
-  })
+  });
 };
 
 Message.countUnread = async (userId, conversationId) => {
@@ -45,7 +45,7 @@ Message.countUnread = async (userId, conversationId) => {
       },
       isRead: false
     }
-  })
+  });
 };
 
 module.exports = Message;
