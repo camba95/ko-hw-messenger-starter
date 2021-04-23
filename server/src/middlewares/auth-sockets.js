@@ -26,9 +26,7 @@ const auth = () => {
       const data = await cache.get(token);
 
       if (data && data.id) {
-        const user = await User.findOne({
-          where: { id: data.id },
-        });
+        const user = await User.findByPk(data.id);
 
         if (!user) {
           console.debug('User not found');

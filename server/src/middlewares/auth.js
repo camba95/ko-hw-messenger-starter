@@ -24,9 +24,7 @@ const auth = () => {
         return res.status(401).send();
       }
 
-      const user = await User.findOne({
-        where: { id: decoded.id },
-      });
+      const user = await User.findByPk(decoded.id);
 
       if (!user) {
         console.debug('User not found');

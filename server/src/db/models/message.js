@@ -20,11 +20,7 @@ const Message = db.define("message", {
 });
 
 Message.setReadStatus = async (userId, messageId) => {
-  const message = await Message.findOne({
-    where: {
-      id: messageId
-    }
-  });
+  const message = await Message.findByPk(messageId);
   await Message.update({
     isRead: true
   }, {

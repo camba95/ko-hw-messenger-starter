@@ -12,7 +12,7 @@ describe("auth middleware", () => {
     jest.resetAllMocks();
   });
 
-  test("should call nextMock with no error", async () => {
+  test("should call next with no error", async () => {
     const reqMock = {
       cookies: {
         [COOKIE_NAME]: "token"
@@ -21,7 +21,7 @@ describe("auth middleware", () => {
     };
     const nextMock = jest.fn();
 
-    User.findOne.mockImplementation(() => ({}));
+    User.findByPk.mockImplementation(() => ({}));
 
     verifyToken.mockImplementation(() => ({
       id: 1,
@@ -70,7 +70,7 @@ describe("auth middleware", () => {
     expect(resMock.send).toHaveBeenCalledWith();
   });
 
-  test.only("should throw error if user does not exist", async () => {
+  test("should throw error if user does not exist", async () => {
     const resMock = {
       status: jest.fn(() => resMock),
       send: jest.fn()
@@ -89,7 +89,7 @@ describe("auth middleware", () => {
     expect(resMock.send).toHaveBeenCalledWith();
   });
 
-  test.only("should throw error if cookie and header CSRF are not equal", async () => {
+  test("should throw error if cookie and header CSRF are not equal", async () => {
     const resMock = {
       status: jest.fn(() => resMock),
       send: jest.fn()

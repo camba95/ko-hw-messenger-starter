@@ -5,6 +5,7 @@ module.exports = {
       ...userObject,
       dataValues: { ...data },
     })),
-    findOne: jest.fn(() => null)
+    findOne: jest.fn(() => null),
+    findByPk: jest.fn(() => null)
   },
 };
