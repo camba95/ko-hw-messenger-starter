@@ -10,7 +10,10 @@ jest.mock("../../src/services/cache");
 
 describe("/POST register", () => {
 
-  afterEach(() => jest.clearAllMocks());
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
 
   test("should return 200", async () => {
     const data = {
@@ -61,7 +64,7 @@ describe("/POST register", () => {
     });
   });
 
-  test("should return 401 when use already exists", async () => {
+  test("should return 401 when user already exists", async () => {
     User.create.mockImplementation(() => {
       throw new CustomError("SequelizeUniqueConstraintError", "User not found");
     });
@@ -78,6 +81,84 @@ describe("/POST register", () => {
     expect(response.status).toEqual(401);
     expect(response.body).toEqual({
       error: "User already exists"
+    });
+  });
+});
+
+describe.only("/POST login", () => {
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
+
+  test("should return 200", async () => {
+    const data = {
+      username: "camba95",
+      password: "123456",
+    };
+    User.findOne.mockImplementation(() => ({
+      ...data,
+      dataValues: { ...data },
+      correctPassword: jest.fn(() => true)
+    }));
+
+    const response = await request(app)
+      .post("/auth/login")
+      .send(data);
+
+    expect(response.status).toEqual(200);
+    expect(response.body).toEqual({
+      ...data,
+      success: true,
+      csrfToken: "token"
+    });
+  });
+
+  test("should return 400 on credential", async () => {
+    const data = { username: "camba95" };
+    const response = await request(app)
+      .post("/auth/login")
+      .send(data);
+
+    expect(response.status).toEqual(400);
+    expect(response.body).toEqual({
+      error: "Username and password required"
+    });
+  });
+
+  test("should return 401 when user does not exist", async () => {
+    const data = {
+      username: "non-existing-user",
+      password: "123456",
+    };
+    const response = await request(app)
+      .post("/auth/login")
+      .send(data);
+
+    expect(response.status).toEqual(401);
+    expect(response.body).toEqual({
+      error: "Wrong username and/or password"
+    });
+  });
+
+  test("should return 401 when wrong password", async () => {
+    const data = {
+      username: "camba95",
+      password: "wrong-password",
+    };
+
+    User.findOne.mockImplementation(() => ({
+      correctPassword: jest.fn(() => false)
+    }));
+
+    const response = await request(app)
+      .post("/auth/login")
+      .send(data);
+
+    expect(response.status).toEqual(401);
+    expect(response.body).toEqual({
+      error: "Wrong username and/or password"
     });
   });
 });

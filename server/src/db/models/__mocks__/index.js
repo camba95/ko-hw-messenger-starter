@@ -2,7 +2,9 @@ module.exports = {
   User: {
     create: jest.fn((data) => ({
       ...data,
-      dataValues: { ...data }
-    }))
-  }
+      ...userObject,
+      dataValues: { ...data },
+    })),
+    findOne: jest.fn(() => null)
+  },
 };
