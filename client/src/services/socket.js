@@ -8,44 +8,45 @@ import {
   setLastSeen
 } from "../store/conversations";
 
-const socket = io(window.location.origin, { autoConnect: false });
-
-export const getSocket = () => socket;
+const socket = io(window.location.origin, {
+  autoConnect: false,
+  upgrade: false
+});
 
 export const connect = (token) => {
-  const socket = getSocket();
   socket.offAny();
   socket.auth = { token };
-  socket.connect();
+
+  if (socket.disconnected) {
+    socket.connect();
+  }
 
   setListeners(socket);
 };
 
+export const isConnected = () => socket.connected;
+
 export const reconnect = (sessionId, userId) => {
-  const socket = getSocket();
   socket.offAny();
   socket.auth = { sessionId };
   socket.userId = userId;
-  socket.connect();
 
   setListeners(socket);
 };
 
 export const disconnect = () => {
-  const socket = getSocket();
+  socket.offAny();
   socket.auth = null;
   socket.userId = null;
-  socket.offAny();
+
   socket.disconnect();
 };
 
 export const emit = (event, payload) => {
-  const socket = getSocket();
   socket.emit(event, payload);
 };
 
 export const setRoom = (room) => {
-  const socket = getSocket();
   socket.room = room;
 };
 
@@ -76,15 +77,19 @@ const setListeners = (socket) => {
       store.dispatch(setLastSeen(data));
     });
 
-    socket.on("last-seen", (data) => {
-      store.dispatch(setLastSeen(data));
-    });
-
     socket.on("session", ({ sessionId, userId }) => {
       socket.auth = { sessionId };
       socket.userId = userId;
       localStorage.setItem(SOCKET_SESSION, sessionId);
       setOtherListeners(socket)
+    });
+
+    socket.on("disconnect", () => {
+      localStorage.removeItem(SOCKET_SESSION);
+    });
+
+    socket.on("connect_error", () => {
+      localStorage.removeItem(SOCKET_SESSION);
     });
   });
 };

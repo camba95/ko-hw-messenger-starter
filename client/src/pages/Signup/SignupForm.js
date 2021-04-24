@@ -28,95 +28,97 @@ const SingupForm = (props) => {
   };
 
   return (
-    <form onSubmit={handleRegister}>
-      <Grid>
-        <Typography variant="h5">Create an account.</Typography>
+    <Grid item xs={12}>
+      <form onSubmit={handleRegister}>
         <Grid>
-          <FormControl
-            fullWidth
-            margin="normal"
+          <Typography variant="h5">Create an account.</Typography>
+          <Grid>
+            <FormControl
+              fullWidth
+              margin="normal"
+            >
+              <TextField
+                aria-label="username"
+                label="Username"
+                name="username"
+                type="text"
+                required
+              />
+            </FormControl>
+          </Grid>
+          <Grid>
+            <FormControl
+              fullWidth
+              margin="normal"
+            >
+              <TextField
+                label="E-mail address"
+                aria-label="e-mail address"
+                type="email"
+                name="email"
+                required
+              />
+            </FormControl>
+          </Grid>
+          <Grid>
+            <FormControl
+              fullWidth
+              margin="normal"
+              error={!!formErrorMessage.confirmPassword}
+            >
+              <TextField
+                aria-label="password"
+                label="Password"
+                type="password"
+                inputProps={{ minLength: 6 }}
+                name="password"
+                required
+              />
+              {formErrorMessage.confirmPassword && (
+                <FormHelperText>
+                  {formErrorMessage.confirmPassword}
+                </FormHelperText>
+              )}
+            </FormControl>
+          </Grid>
+          <Grid>
+            <FormControl
+              fullWidth
+              margin="normal"
+              error={!!formErrorMessage.confirmPassword}
+            >
+              <TextField
+                label="Confirm Password"
+                aria-label="confirm password"
+                type="password"
+                inputProps={{ minLength: 6 }}
+                name="confirmPassword"
+                required
+              />
+              {formErrorMessage.confirmPassword && (
+                <FormHelperText>
+                  {formErrorMessage.confirmPassword}
+                </FormHelperText>
+              )}
+            </FormControl>
+          </Grid>
+          <Grid
+            container
+            item
+            justify="center"
           >
-            <TextField
-              aria-label="username"
-              label="Username"
-              name="username"
-              type="text"
-              required
-            />
-          </FormControl>
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              color="primary"
+            >
+              Create
+            </Button>
+          </Grid>
         </Grid>
-        <Grid>
-          <FormControl
-            fullWidth
-            margin="normal"
-          >
-            <TextField
-              label="E-mail address"
-              aria-label="e-mail address"
-              type="email"
-              name="email"
-              required
-            />
-          </FormControl>
-        </Grid>
-        <Grid>
-          <FormControl
-            fullWidth
-            margin="normal"
-            error={!!formErrorMessage.confirmPassword}
-          >
-            <TextField
-              aria-label="password"
-              label="Password"
-              type="password"
-              inputProps={{ minLength: 6 }}
-              name="password"
-              required
-            />
-            {formErrorMessage.confirmPassword && (
-              <FormHelperText>
-                {formErrorMessage.confirmPassword}
-              </FormHelperText>
-            )}
-          </FormControl>
-        </Grid>
-        <Grid>
-          <FormControl
-            fullWidth
-            margin="normal"
-            error={!!formErrorMessage.confirmPassword}
-          >
-            <TextField
-              label="Confirm Password"
-              aria-label="confirm password"
-              type="password"
-              inputProps={{ minLength: 6 }}
-              name="confirmPassword"
-              required
-            />
-            {formErrorMessage.confirmPassword && (
-              <FormHelperText>
-                {formErrorMessage.confirmPassword}
-              </FormHelperText>
-            )}
-          </FormControl>
-        </Grid>
-        <Grid
-          container
-          item
-          justify="center"
-        >
-          <Button
-            type="submit"
-            variant="contained"
-            size="large"
-            color="primary"
-          >
-            Create
-              </Button>
-        </Grid>
-      </Grid>
-    </form>
+      </form>
+    </Grid>
   );
 };
 

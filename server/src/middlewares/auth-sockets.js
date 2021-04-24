@@ -18,24 +18,15 @@ const auth = () => {
 
       const token = socket.handshake.auth.token;
 
-      if (!token) {
-        console.debug("Token not provided");
-        return next(new Error("Unathorized connection"));
-      }
+      if (!token) throw new Error("Token not provided");
 
       const data = await cache.get(token);
 
-      if (!data || !data.id) {
-        console.debug("Token not found");
-        return next(new Error("Unathorized connection"));
-      }
+      if (!data || !data.id) throw new Error("Token not found");
 
       const user = await User.findByPk(data.id);
 
-      if (!user) {
-        console.debug("User not found");
-        return next(new Error("Unathorized connection"));
-      }
+      if (!user) throw new Error("User not found");
 
       await cache.del(token);
 
@@ -44,7 +35,7 @@ const auth = () => {
 
       socket.sessionId = newSessionId;
       socket.userId = user.id;
-      return next();
+      next();
     } catch (error) {
       console.error(error);
       next(new Error("Unathorized connection"));

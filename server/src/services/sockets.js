@@ -22,7 +22,7 @@ const setListeners = (io) => {
     });
 
     socket.on("new-message", async ({ message, sender, lastMessage }) => {
-      const { conversationId } = lastMessage;
+      const { conversationId, userId } = message;
 
       const conversation = await Conversation.findByPk(conversationId);
 
@@ -34,7 +34,7 @@ const setListeners = (io) => {
       const data = await cache.get(`user-room-${otherUserId}`);
 
       if (data && data.room === `${conversationId}`) {
-        socket.to(conversationId).emit("new-message", {
+        socket.to(`room-${conversationId}`).to(userId).emit("new-message", {
           message,
           sender,
           lastMessage
@@ -58,7 +58,7 @@ const setListeners = (io) => {
 
       if (messageId) await Message.setReadStatus(userId, messageId);
 
-      socket.to(conversationId).emit("last-seen", {
+      socket.to(`room-${conversationId}`).emit("last-seen", {
         messageId,
         userId,
         conversationId
@@ -85,10 +85,10 @@ const setListeners = (io) => {
     socket.on("enter-room", async ({ room }) => {
       const data = await cache.get(`user-room-${socket.userId}`);
       if (data) {
-        socket.leave(data.room);
+        socket.leave(`room-${data.room}`);
       }
       await cache.set(`user-room-${socket.userId}`, "room", room);
-      socket.join(room);
+      socket.join(`room-${room}`);
     });
 
     socket.emit("session", {

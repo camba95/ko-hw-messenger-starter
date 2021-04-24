@@ -1,19 +1,49 @@
 import React from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
-import {
-  Grid,
-  Box,
-  Typography,
-  Button
-} from "@material-ui/core";
+import { Typography, Button } from "@material-ui/core";
 
 import LoginForm from "./LoginForm";
-import SideBanner from "../../components/SideBanner";
+import ConditionalElement from "../../components/ConditionalElement";
+import LoginTemplate from "../../components/Templates/LoginTemplate";
 import { login } from "../../store/utils/thunkCreators";
+
+import BubbleIcon from "../../components/BubbleIcon";
+
+const generateButtons = (history) => ([
+  {
+    notIn: ["md", "lg", "xl"],
+    render: () => (
+      <Button
+        size="medium"
+        color="secondary"
+        variant="outlined"
+        onClick={() => history.push("/register")}
+      >
+        Create account
+      </Button>
+    )
+  },
+  {
+    notIn: ["xs", "sm"],
+    render: () => (
+      <Button
+        size="large"
+        color="secondary"
+        variant="contained"
+        onClick={() => history.push("/register")}
+      >
+        Create account
+      </Button>
+    )
+  },
+]);
 
 const Login = (props) => {
   const history = useHistory();
+
+  const signupButtons = generateButtons(history);
+
   const { user, login } = props;
 
   if (user.id) {
@@ -21,32 +51,13 @@ const Login = (props) => {
   }
 
   return (
-    <SideBanner>
-      <Grid container direction="column" justify="flex-start" alignItems="stretch">
-        <Grid container item justify="flex-end" alignItems="center">
-          <Box m={2}>
-            <Typography>Don't have an account?</Typography>
-          </Box>
-          <Box m={2}>
-            <Button
-              size="large"
-              color="secondary"
-              variant="contained"
-              onClick={() => history.push("/register")}
-            >
-              Create account
-            </Button>
-          </Box>
-        </Grid>
-        <Box height="100%" display="flex" flex="1">
-          <Grid container item justify="center" alignItems="center">
-            <Box width="60%">
-              <LoginForm login={login} />
-            </Box>
-          </Grid>
-        </Box>
-      </Grid>
-    </SideBanner>
+    <LoginTemplate
+      formIcon={<BubbleIcon fill="#3A8DFF" />}
+      headerText={<Typography>Don't have an account?</Typography>}
+      headerButton={<ConditionalElement elements={signupButtons} />}
+    >
+      <LoginForm login={login} />
+    </LoginTemplate>
   );
 };
 

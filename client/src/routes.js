@@ -26,11 +26,13 @@ const Routes = (props) => {
       setSnackBarOpen(true);
       return;
     }
+  }, [user.error]);
+
+  useEffect(() => {
     if (user.id) {
       connectSocket(user.id);
     }
-
-  }, [user.id, user.error, connectSocket]);
+  }, [user.id, connectSocket]);
 
   if (props.user.isFetchingUser) {
     return <div>Loading...</div>;
@@ -51,7 +53,7 @@ const Routes = (props) => {
         <Route
           exact
           path="/"
-          render={(props) => (props.user?.id ? <Home /> : <Signup />)}
+          render={(props) => (props.user?.id ? <Home /> : <Login />)}
         />
         <Route path="/home" component={Home} />
       </Switch>

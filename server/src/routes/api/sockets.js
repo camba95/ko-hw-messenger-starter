@@ -2,7 +2,7 @@ const router = require("express").Router();
 const cache = require("../../services/cache");
 const { v4: uuid } = require("uuid");
 
-router.post("/", async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const csrfToken = uuid();
 
