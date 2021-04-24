@@ -26,11 +26,13 @@ const Routes = (props) => {
       setSnackBarOpen(true);
       return;
     }
+  }, [user.error]);
+
+  useEffect(() => {
     if (user.id) {
       connectSocket(user.id);
     }
-
-  }, [user.id, user.error, connectSocket]);
+  }, [user.id, connectSocket]);
 
   if (props.user.isFetchingUser) {
     return <div>Loading...</div>;

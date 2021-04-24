@@ -62,7 +62,7 @@ const LoginTemplate = (props) => {
           {form}
         </SideBanner>
       </Hidden>
-      <Hidden smUp>
+      <Hidden mdUp>
         {form}
       </Hidden>
     </>

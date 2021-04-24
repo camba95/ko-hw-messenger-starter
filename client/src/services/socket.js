@@ -7,23 +7,29 @@ import {
   addOnlineUser,
   setLastSeen
 } from "../store/conversations";
-import { connectSocket } from "../store/utils/thunkCreators";
 
-const socket = io(window.location.origin, { autoConnect: false });
+const socket = io(window.location.origin, {
+  autoConnect: false,
+  upgrade: false
+});
 
 export const connect = (token) => {
   socket.offAny();
   socket.auth = { token };
-  socket.connect();
+
+  if (socket.disconnected) {
+    socket.connect();
+  }
 
   setListeners(socket);
 };
+
+export const isConnected = () => socket.connected;
 
 export const reconnect = (sessionId, userId) => {
   socket.offAny();
   socket.auth = { sessionId };
   socket.userId = userId;
-  socket.connect();
 
   setListeners(socket);
 };
@@ -47,10 +53,6 @@ export const setRoom = (room) => {
 const setListeners = (socket) => {
   socket.on("connect", () => {
     console.debug("Connected to server");
-
-    if (socket.auth.sessionId) {
-      return store.dispatch(connectSocket());
-    }
 
     socket.on("add-online-user", (data) => {
       store.dispatch(addOnlineUser(data));
@@ -82,11 +84,11 @@ const setListeners = (socket) => {
       setOtherListeners(socket)
     });
 
-    socket.on("disconnect", (err) => {
+    socket.on("disconnect", () => {
       localStorage.removeItem(SOCKET_SESSION);
     });
 
-    socket.on("connect_error", (err) => {
+    socket.on("connect_error", () => {
       localStorage.removeItem(SOCKET_SESSION);
     });
   });

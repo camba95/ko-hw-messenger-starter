@@ -31,8 +31,6 @@ export const fetchUser = () => async (dispatch) => {
 const onAuthSuccess = async (data, dispatch) => {
   localStorage.setItem(CSRF_HEADER, data.csrfToken);
   dispatch(gotUser(data));
-  socket.connect(data.csrfToken);
-  socket.emit("go-online", data.id);
 };
 
 export const register = (credentials) => async (dispatch) => {
@@ -138,11 +136,17 @@ export const selectChat = (username, data, conversationId) => async (dispatch) =
 
 export const connectSocket = (userId) => async () => {
   try {
+    if (socket.isConnected()) return;
+
     let sessionId = localStorage.getItem(SOCKET_SESSION);
+
     if (sessionId) {
       socket.reconnect(sessionId, userId);
     } else {
       const { data } = await api.authSocket();
+
+      if (!data) return;
+
       socket.connect(data.csrfToken);
     }
     socket.emit("go-online", userId);
