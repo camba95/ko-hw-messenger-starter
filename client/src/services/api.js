@@ -19,7 +19,7 @@ export const login = async (credentials) => {
 };
 
 export const logout = async () => {
-  return axios.delete("/auth/logout");
+  return axios.post("/auth/logout");
 };
 
 export const getCurrentUser = async () => {
