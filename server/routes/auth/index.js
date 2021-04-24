@@ -52,18 +52,16 @@ router.post("/login", async (req, res, next) => {
     // expects username and password in req.body
     const { email, password } = req.body;
     if (!email || !password)
-      return res.status(400).json({ error: "Username and password required" });
+      return res.status(400).json({ error: "Email and password required" });
 
     const user = await User.findOne({
       where: { email },
     });
 
     if (!user) {
-      console.log({ error: `No user found for username: ${username}` });
       return res.status(401).json({ error: "Wrong username and/or password" });
     }
     if (!user.correctPassword(password)) {
-      console.log({ error: "Wrong username and/or password" });
       return res.status(401).json({ error: "Wrong username and/or password" });
     }
 

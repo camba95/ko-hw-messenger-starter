@@ -1,7 +1,71 @@
 const router = require("express").Router();
-const { User, Conversation, Message } = require("../../db/models");
+const {
+  User,
+  Conversation,
+  Message,
+  LastSeen,
+  LastMessage
+} = require("../../db/models");
 const { Op } = require("sequelize");
 const onlineUsers = require("../../onlineUsers");
+
+const fetchConversations = async (userId) => {
+  return Conversation.findAll({
+    where: {
+      [Op.or]: {
+        user1Id: userId,
+        user2Id: userId,
+      },
+    },
+    attributes: ["id"],
+    order: [[Message, "createdAt", "ASC"]],
+    include: [
+      { model: Message, order: ["createdAt", "ASC"] },
+      {
+        model: LastSeen,
+        where: {
+          userId: {
+            [Op.not]: userId,
+          }
+        },
+        attributes: ["messageId"],
+        required: false
+      },
+      {
+        model: LastMessage,
+        where: {
+          userId: {
+            [Op.not]: userId,
+          }
+        },
+        attributes: ["messageId"],
+        required: false
+      },
+      {
+        model: User,
+        as: "user1",
+        where: {
+          id: {
+            [Op.not]: userId,
+          },
+        },
+        attributes: ["id", "username", "photoUrl"],
+        required: false,
+      },
+      {
+        model: User,
+        as: "user2",
+        where: {
+          id: {
+            [Op.not]: userId,
+          },
+        },
+        attributes: ["id", "username", "photoUrl"],
+        required: false,
+      },
+    ],
+  });
+};
 
 // get all conversations for a user, include latest message text for preview, and all messages
 // include other user model so we have info on username/profile pic (don't include current user info)
@@ -12,41 +76,7 @@ router.get("/", async (req, res, next) => {
       return res.sendStatus(401);
     }
     const userId = req.user.id;
-    const conversations = await Conversation.findAll({
-      where: {
-        [Op.or]: {
-          user1Id: userId,
-          user2Id: userId,
-        },
-      },
-      attributes: ["id"],
-      order: [[Message, "createdAt", "DESC"]],
-      include: [
-        { model: Message, order: ["createdAt", "DESC"] },
-        {
-          model: User,
-          as: "user1",
-          where: {
-            id: {
-              [Op.not]: userId,
-            },
-          },
-          attributes: ["id", "username", "photoUrl"],
-          required: false,
-        },
-        {
-          model: User,
-          as: "user2",
-          where: {
-            id: {
-              [Op.not]: userId,
-            },
-          },
-          attributes: ["id", "username", "photoUrl"],
-          required: false,
-        },
-      ],
-    });
+    const conversations = await fetchConversations(userId);
 
     for (let i = 0; i < conversations.length; i++) {
       const convo = conversations[i];
@@ -68,8 +98,14 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser.online = false;
       }
 
+      convoJSON.lastSeens = convoJSON.lastSeens[0];
+      convoJSON.lastOtherUserMessage = convoJSON.lastMessages[0];
+      delete convoJSON.lastMessages;
+
+      convoJSON.unreadMessages = await Message.countUnread(userId, convoJSON.id);
+
       // set properties for notification count and latest message preview
-      convoJSON.latestMessageText = convoJSON.messages[0].text;
+      convoJSON.latestMessageText = convoJSON.messages[convoJSON.messages.length - 1];
       conversations[i] = convoJSON;
     }
 

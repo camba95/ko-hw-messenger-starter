@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { Box } from "@material-ui/core";
+import { Box, Chip } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
-import { setActiveChat } from "../../store/activeConversation";
+import { selectChat } from "../../store/utils/thunkCreators";
 import { connect } from "react-redux";
 
 const styles = {
@@ -21,15 +21,25 @@ const styles = {
 
 class Chat extends Component {
   handleClick = async (conversation) => {
-    await this.props.setActiveChat(conversation.otherUser.username);
+    const { userId } = this.props;
+    const username = conversation.otherUser.username
+    const otherId = conversation.otherUser.id
+    const lastMessage = conversation.lastOtherUserMessage || {};
+    const data = {
+      userId,
+      otherId,
+      conversationId: conversation.id,
+      messageId: lastMessage.messageId
+    };
+    await this.props.selectChat(username, data, conversation.id);
   };
 
   render() {
-    const { classes } = this.props;
-    const otherUser = this.props.conversation.otherUser;
+    const { classes, conversation } = this.props;
+    const otherUser = conversation.otherUser;
     return (
       <Box
-        onClick={() => this.handleClick(this.props.conversation)}
+        onClick={() => this.handleClick(conversation)}
         className={classes.root}
       >
         <BadgeAvatar
@@ -38,7 +48,12 @@ class Chat extends Component {
           online={otherUser.online}
           sidebar={true}
         />
-        <ChatContent conversation={this.props.conversation} />
+        <ChatContent conversation={conversation} />
+        {!!conversation.unreadMessages && (
+          <Box mr={1}>
+            <Chip color="primary" size="small" label={conversation.unreadMessages} />
+          </Box>
+        )}
       </Box>
     );
   }
@@ -46,8 +61,8 @@ class Chat extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setActiveChat: (id) => {
-      dispatch(setActiveChat(id));
+    selectChat: (username, data, id) => {
+      dispatch(selectChat(username, data, id));
     },
   };
 };

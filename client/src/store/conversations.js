@@ -4,6 +4,8 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
+  setLastSeenInConversation,
+  clearUnreadInConversation
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -15,6 +17,8 @@ const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
+const SET_LAST_SEEN = "SET_LAST_SEEN";
+const CLEAR_UNREAD_MESSAGES = "CLEAR_UNREAD_MESSAGES";
 
 // ACTION CREATORS
 
@@ -25,10 +29,14 @@ export const gotConversations = (conversations) => {
   };
 };
 
-export const setNewMessage = (message, sender) => {
+export const setNewMessage = (message, sender, currentConversation) => {
   return {
     type: SET_MESSAGE,
-    payload: { message, sender: sender || null },
+    payload: {
+      message,
+      currentConversation,
+      sender: sender || null
+    },
   };
 };
 
@@ -67,6 +75,20 @@ export const addConversation = (recipientId, newMessage) => {
   };
 };
 
+export const setLastSeen = (data) => {
+  return {
+    type: SET_LAST_SEEN,
+    payload: data,
+  };
+};
+
+export const clearUnreadMessages = (conversationId) => {
+  return {
+    type: CLEAR_UNREAD_MESSAGES,
+    payload: conversationId
+  };
+};
+
 // REDUCER
 
 const reducer = (state = [], action) => {
@@ -75,12 +97,10 @@ const reducer = (state = [], action) => {
       return action.conversations;
     case SET_MESSAGE:
       return addMessageToStore(state, action.payload);
-    case ADD_ONLINE_USER: {
+    case ADD_ONLINE_USER:
       return addOnlineUserToStore(state, action.id);
-    }
-    case REMOVE_OFFLINE_USER: {
+    case REMOVE_OFFLINE_USER:
       return removeOfflineUserFromStore(state, action.id);
-    }
     case SET_SEARCHED_USERS:
       return addSearchedUsersToStore(state, action.users);
     case CLEAR_SEARCHED_USERS:
@@ -91,6 +111,10 @@ const reducer = (state = [], action) => {
         action.payload.recipientId,
         action.payload.newMessage
       );
+    case SET_LAST_SEEN:
+      return setLastSeenInConversation(state, action.payload);
+    case CLEAR_UNREAD_MESSAGES:
+      return clearUnreadInConversation(state, action.payload);
     default:
       return state;
   }

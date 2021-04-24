@@ -27,4 +27,8 @@ const rootReducer = (state, action) => {
   return appReducer(state, action);
 };
 
-export default createStore(rootReducer, applyMiddleware(thunkMiddleware, loggerMiddleware));
+const middlewares = [thunkMiddleware];
+
+if (process.env.REACT_APP_REDUX_LOGGER) middlewares.push(loggerMiddleware)
+
+export default createStore(rootReducer, applyMiddleware(...middlewares));

@@ -4,7 +4,9 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  clearUnreadMessages
 } from "../conversations";
+import { setActiveChat } from "../activeConversation";
 import { gotUser, setFetchingStatus } from "../user";
 import * as api from "../../services/api";
 import { CSRF_HEADER, SOCKET_SESSION } from "../../constants";
@@ -29,8 +31,6 @@ export const fetchUser = () => async (dispatch) => {
 const onAuthSuccess = async (data, dispatch) => {
   localStorage.setItem(CSRF_HEADER, data.csrfToken);
   dispatch(gotUser(data));
-  socket.connect(data.csrfToken);
-  socket.emit("go-online", data.id);
 };
 
 export const register = (credentials) => async (dispatch) => {
@@ -89,10 +89,10 @@ const saveMessage = async (body) => {
   return data;
 };
 
-const sendMessage = (data, body) => {
+const sendMessage = (data) => {
   socket.emit("new-message", {
     message: data.message,
-    recipientId: body.recipientId,
+    lastMessage: data.lastMessage,
     sender: data.sender,
   });
 };
@@ -103,13 +103,13 @@ export const postMessage = (body) => async (dispatch) => {
   try {
     const data = await saveMessage(body);
 
-    if (!body.conversationId) {
-      dispatch(addConversation(body.recipientId, data.message));
+    if (body.conversationId) {
+      dispatch(setNewMessage(data.message, null, body.conversationId));
     } else {
-      dispatch(setNewMessage(data.message));
+      dispatch(addConversation(body.recipientId, data.message));
     }
 
-    sendMessage(data, body);
+    sendMessage(data);
   } catch (error) {
     console.error(error);
   }
@@ -124,15 +124,29 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
+export const selectChat = (username, data, conversationId) => async (dispatch) => {
+  socket.emit("enter-room", { room: conversationId });
+  socket.setRoom(conversationId);
+  socket.emit("last-seen", data);
+  dispatch(clearUnreadMessages(conversationId));
+  dispatch(setActiveChat({ username, conversationId }));
+};
+
 // SOCKETS THUNK CREATORS
 
 export const connectSocket = (userId) => async () => {
   try {
+    if (socket.isConnected()) return;
+
     let sessionId = localStorage.getItem(SOCKET_SESSION);
+
     if (sessionId) {
       socket.reconnect(sessionId, userId);
     } else {
       const { data } = await api.authSocket();
+
+      if (!data) return;
+
       socket.connect(data.csrfToken);
     }
     socket.emit("go-online", userId);
