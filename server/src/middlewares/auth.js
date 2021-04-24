@@ -5,7 +5,7 @@ const { User } = require("../db/models");
 const verifyCsrfToken = (csrfCookie, csrfHeader) => {
   if (!csrfCookie || !csrfHeader) throw new Error("CSRF token invalid.");
   if (csrfCookie !== csrfHeader) throw new Error("CSRF token invalid.");
-}
+};
 
 const auth = () => {
   return async (req, res, next) => {
@@ -18,9 +18,7 @@ const auth = () => {
 
       if (!decoded) throw new Error("Invalid token");
 
-      const user = await User.findOne({
-        where: { id: decoded.id },
-      });
+      const user = await User.findByPk(decoded.id);
 
       if (!user) throw new Error("User not found");
 

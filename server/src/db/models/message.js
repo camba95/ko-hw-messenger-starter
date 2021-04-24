@@ -20,11 +20,7 @@ const Message = db.define("message", {
 });
 
 Message.setReadStatus = async (userId, messageId) => {
-  const message = await Message.findOne({
-    where: {
-      id: messageId
-    }
-  });
+  const message = await Message.findByPk(messageId);
   await Message.update({
     isRead: true
   }, {
@@ -37,7 +33,7 @@ Message.setReadStatus = async (userId, messageId) => {
         [Op.not]: userId
       }
     }
-  })
+  });
 };
 
 Message.countUnread = async (userId, conversationId) => {
@@ -49,7 +45,7 @@ Message.countUnread = async (userId, conversationId) => {
       },
       isRead: false
     }
-  })
+  });
 };
 
 module.exports = Message;

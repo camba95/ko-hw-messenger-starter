@@ -2,16 +2,16 @@
 
 /* Sets up the environment variables from your .env file*/
 require("dotenv").config();
-const sockets = require("../services/sockets");
-const cache = require("../services/cache");
-const { app, sessionStore } = require("../app");
+const sockets = require("../src/services/sockets");
+const cache = require("../src/services/cache");
+const { app, sessionStore } = require("../src/app");
 
 /**
  * Module dependencies.
  */
 
 const http = require("http");
-const db = require("../db");
+const db = require("../src/db");
 
 /**
  * Get port from environment and store in Express.

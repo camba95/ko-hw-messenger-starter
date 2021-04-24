@@ -6,7 +6,8 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const db = require("./db");
-const { auth } = require("./middlewares/auth");
+const router = require("./routes");
+
 // create store for sessions to persist in database
 const sessionStore = new SequelizeStore({ db });
 
@@ -22,8 +23,7 @@ app.use(express.static(join(__dirname, "public")));
 
 
 // require api routes here after I create them
-app.use("/auth", require("./routes/auth"));
-app.use("/api", auth(), require("./routes/api"));
+app.use(router);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -31,7 +31,7 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
   // set locals, only providing error in development
   console.log(err);
   res.locals.message = err.message;

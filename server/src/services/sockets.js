@@ -26,7 +26,10 @@ const setListeners = (io) => {
 
       const conversation = await Conversation.findByPk(conversationId);
 
-      const otherUserId = userId === conversation.user1Id ? conversation.user2Id : conversation.user1Id;
+      const otherUserId =
+        lastMessage.userId === conversation.user1Id ?
+          conversation.user2Id :
+          conversation.user1Id;
 
       const data = await cache.get(`user-room-${otherUserId}`);
 
@@ -84,7 +87,7 @@ const setListeners = (io) => {
       if (data) {
         socket.leave(`room-${data.room}`);
       }
-      await cache.set(`user-room-${socket.userId}`, 'room', room);
+      await cache.set(`user-room-${socket.userId}`, "room", room);
       socket.join(`room-${room}`);
     });
 

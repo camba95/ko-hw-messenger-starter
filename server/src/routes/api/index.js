@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const messagesApi = require("./messages")
-const conversationsApi = require("./conversations")
-const usersApi = require("./users")
-const socketsApi = require("./sockets")
+const messagesApi = require("./messages");
+const conversationsApi = require("./conversations");
+const usersApi = require("./users");
+const socketsApi = require("./sockets");
 
 router.use("/messages", messagesApi);
 router.use("/conversations", conversationsApi);

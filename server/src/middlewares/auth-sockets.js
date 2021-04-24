@@ -22,24 +22,20 @@ const auth = () => {
 
       const data = await cache.get(token);
 
-      if (data && data.id) {
-        const user = await User.findOne({
-          where: { id: data.id },
-        });
+      if (!data || !data.id) throw new Error("Token not found");
 
-        if (!user) throw new Error("User not found");
+      const user = await User.findByPk(data.id);
 
-        await cache.del(token);
+      if (!user) throw new Error("User not found");
 
-        const sessionId = uuid();
-        await cache.set(sessionId, "id", data.id);
+      await cache.del(token);
 
-        socket.sessionId = sessionId;
-        socket.userId = user.id;
-        return next();
-      }
+      const newSessionId = uuid();
+      await cache.set(newSessionId, "id", data.id);
 
-      throw new Error("Token not found");
+      socket.sessionId = newSessionId;
+      socket.userId = user.id;
+      next();
     } catch (error) {
       console.error(error);
       next(new Error("Unathorized connection"));
