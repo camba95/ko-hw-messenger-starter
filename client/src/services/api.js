@@ -32,6 +32,11 @@ export const fetchConversations = async () => {
   return axios.get("/api/conversations", { headers });
 };
 
+export const createConversation = async (data) => {
+  const headers = getHeaders();
+  return axios.post("/api/conversations", data, { headers });
+};
+
 export const saveMessages = async (data) => {
   const headers = getHeaders();
   return axios.post("/api/messages", data, { headers });

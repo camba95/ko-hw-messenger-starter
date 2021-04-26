@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { Box, Chip } from "@material-ui/core";
-import { BadgeAvatar, ChatContent } from "../Sidebar";
-import { withStyles } from "@material-ui/core/styles";
-import { selectChat } from "../../store/utils/thunkCreators";
 import { connect } from "react-redux";
+import { Box, Chip } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
+import { BadgeAvatar, ChatContent } from "../Sidebar";
+import { selectChat } from "../../store/utils/thunkCreators";
+import { createConversation } from "../../services/api";
 
 const styles = {
   root: {
@@ -22,16 +23,21 @@ const styles = {
 class Chat extends Component {
   handleClick = async (conversation) => {
     const { userId } = this.props;
-    const username = conversation.otherUser.username
     const otherId = conversation.otherUser.id
+    let conversationId = conversation.id;
+    if (!conversationId) {
+      const { data } = await createConversation({ otherId });
+      conversationId = data.id;
+    }
+    const username = conversation.otherUser.username;
     const lastMessage = conversation.lastOtherUserMessage || {};
     const data = {
       userId,
       otherId,
-      conversationId: conversation.id,
+      conversationId: conversationId,
       messageId: lastMessage.messageId
     };
-    await this.props.selectChat(username, data, conversation.id);
+    await this.props.selectChat(username, data, conversationId);
   };
 
   render() {
