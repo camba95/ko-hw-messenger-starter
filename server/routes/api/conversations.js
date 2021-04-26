@@ -115,4 +115,20 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.post("/", async (req, res, next) => {
+  try {
+    const { id: userId } = req.user;
+    const { otherId } = req.body;
+
+    const newConvo = await Conversation.create({
+      user1Id: userId,
+      user2Id: otherId
+    });
+
+    res.json({ ...newConvo.dataValues });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
