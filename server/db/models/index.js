@@ -3,6 +3,7 @@ const User = require("./user");
 const Message = require("./message");
 const LastSeen = require("./last-seen");
 const LastMessage = require("./last-message");
+const createHooks = require("./hooks");
 
 // associations
 
@@ -22,6 +23,8 @@ LastMessage.belongsTo(User);
 LastMessage.belongsTo(Conversation);
 Conversation.hasMany(LastMessage);
 User.hasMany(LastMessage);
+
+createHooks();
 
 module.exports = {
   User,

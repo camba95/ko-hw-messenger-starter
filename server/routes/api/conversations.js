@@ -18,9 +18,13 @@ const fetchConversations = async (userId) => {
       },
     },
     attributes: ["id"],
-    order: [[Message, "createdAt", "ASC"]],
+    order: [["updatedAt", "DESC"]],
     include: [
-      { model: Message, order: ["createdAt", "ASC"] },
+      {
+        model: Message,
+        separate: true,
+        order: [["createdAt", "ASC"]]
+      },
       {
         model: LastSeen,
         where: {
